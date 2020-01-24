@@ -1,72 +1,30 @@
-version: "3.5"
+version: "3"
 
 services:
   postgres:
-    container_name: postgres_container
-    image: postgres
-    deploy:
-      resources:
-        limits:
-          cpus: "0.010"
-          memory: 300M
-    environment:
-      POSTGRES_DB: insylva
-      POSTGRES_USER: insylva_pg
-      POSTGRES_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
-      PGDATA: /data/postgres
+    image: in-sylva-postgres:latest
     volumes:
-      - ./data.sql:/docker-entrypoint-initdb.d/init.sql:z
-      # -  postgres:/data/postgres
+      - ./postgresql/data.sql:/docker-entrypoint-initdb.d/init.sql:z
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: insylva,keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
-    networks:
-      - postgres
-    restart: unless-stopped
-
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4
-    deploy:
-      resources:
-        limits:
-          cpus: "0.020"
-          memory: 500M
-    environment:
-      PGADMIN_DEFAULT_EMAIL: aytac.ozkan@inra.fr
-      PGADMIN_DEFAULT_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
-    volumes:
-      - pgadmin:/root/.pgadmin
-    ports:
-      - "${PGADMIN_PORT:-5050}:80"
-    networks:
-      - postgres
-    restart: unless-stopped
-
   keycloak:
     image: in-sylva.keycloak:latest
-    deploy:
-      resources:
-        limits:
-          cpus: "0.020"
-          memory: 500M
-    container_name: insylva_keycloak
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
-      DB_DATABASE: insylva
-      DB_USER: insylva_pg
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
       DB_SCHEMA: public
-      DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
-      KEYCLOAK_USER: in-sylva-admin
-      KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
-    networks:
+      DB_PASSWORD: password
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: Pa55w0rd
+      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+      #JDBC_PARAMS: "ssl=true"
+    ports:
+      - 8080:8080
+    depends_on:
       - postgres
-    restart: unless-stopped
-
-networks:
-  postgres:
-    driver: bridge
-
-volumes:
-  postgres:
-  pgadmin:
