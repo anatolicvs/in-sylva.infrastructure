@@ -4,27 +4,83 @@ services:
   postgres:
     image: in-sylva-postgres:latest
     volumes:
-      - ./postgresql/data.sql:/docker-entrypoint-initdb.d/init.sql:z
+      - ./data.sql:/docker-entrypoint-initdb.d/data.sql
+      - ./postgres-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_MULTIPLE_DATABASES: insylva,keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: password
+      POSTGRES_MULTIPLE_DATABASES: insylva, keycloak
+      POSTGRES_USER: insylva_admin_pg
+      POSTGRES_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
     ports:
       - "5432:5432"
+    networks:
+      - app-network
   keycloak:
     image: in-sylva.keycloak:latest
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
       DB_DATABASE: keycloak
-      DB_USER: keycloak
+      DB_USER: insylva_admin_pg
       DB_SCHEMA: public
-      DB_PASSWORD: password
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: Pa55w0rd
+      DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      KEYCLOAK_USER: insylva_admin
+      KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
       # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
       #JDBC_PARAMS: "ssl=true"
     ports:
-      - 8080:8080
+      - 7000:8080
     depends_on:
       - postgres
+    networks:
+      - app-network
+  pgadmin:
+    image: dpage/pgadmin4
+    deploy:
+      resources:
+        limits:
+          cpus: "0.020"
+          memory: 500M
+    environment:
+      PGADMIN_DEFAULT_EMAIL: aytac.ozkan@inra.fr
+      PGADMIN_DEFAULT_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+    volumes:
+      - pgadmin:/root/.pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:latest
+    container_name: inra_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: inra_paca_mongoc
+      MONGO_INITDB_ROOT_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      MONGO_INITDB_DATABASE: inra_paca
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8881:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: inra_paca_mongoc
+      ME_CONFIG_MONGODB_ADMINPASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+    networks:
+      - app-network
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  pgadmin:
+networks:
+  app-network:
+    driver: bridge
