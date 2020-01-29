@@ -38,8 +38,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "0.020"
-          memory: 500M
+          cpus: "0.20"
+          memory: 10000M
     environment:
       PGADMIN_DEFAULT_EMAIL: aytac.ozkan@inra.fr
       PGADMIN_DEFAULT_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
@@ -53,11 +53,11 @@ services:
 
   mongo:
     image: mongo:latest
-    container_name: inra_mongodb
+    container_name: in_sylva_mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: inra_paca_mongoc
+      MONGO_INITDB_ROOT_USERNAME: in_sylva_mongoc
       MONGO_INITDB_ROOT_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
-      MONGO_INITDB_DATABASE: inra_paca
+      MONGO_INITDB_DATABASE: insylva
     ports:
       - 27017:27017
     volumes:
@@ -72,15 +72,76 @@ services:
     ports:
       - 8881:8081
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: inra_paca_mongoc
+      ME_CONFIG_MONGODB_ADMINUSERNAME: in_sylva_mongoc
       ME_CONFIG_MONGODB_ADMINPASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
     networks:
       - app-network
     restart: unless-stopped
 
+  odfe-node1:
+    image: amazon/opendistro-for-elasticsearch:1.3.0
+    container_name: odfe-node1
+    environment:
+      - cluster.name=odfe-cluster
+      - node.name=odfe-node1
+      - discovery.seed_hosts=odfe-node1,odfe-node2
+      - cluster.initial_master_nodes=odfe-node1,odfe-node2
+      - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536 # maximum number of open files for the Elasticsearch user, set to at least 65536 on modern systems
+        hard: 65536
+    volumes:
+      - odfe-data1:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9600:9600 # required for Performance Analyzer
+    networks:
+      - app-network
+  odfe-node2:
+    image: amazon/opendistro-for-elasticsearch:1.3.0
+    container_name: odfe-node2
+    environment:
+      - cluster.name=odfe-cluster
+      - node.name=odfe-node2
+      - discovery.seed_hosts=odfe-node1,odfe-node2
+      - cluster.initial_master_nodes=odfe-node1,odfe-node2
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - odfe-data2:/usr/share/elasticsearch/data
+    networks:
+      - app-network
+  
+  kibana:
+    image: amazon/opendistro-for-elasticsearch-kibana:1.3.0
+    container_name: odfe-kibana
+    ports:
+      - 5601:5601
+    expose:
+      - "5601"
+    environment:
+      ELASTICSEARCH_URL: https://odfe-node1:9200
+      ELASTICSEARCH_HOSTS: https://odfe-node1:9200
+    networks:
+      - app-network
+
 volumes:
   postgres-data:
   pgadmin:
+  odfe-data1:
+  odfe-data2:
 networks:
   app-network:
     driver: bridge
