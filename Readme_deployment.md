@@ -75,7 +75,7 @@ Try to reach pgadmin4 at http://localhost:5050/auth/
 ## Managing errors
 What to do if things go wrong ?
 1. Call the police
-2. Call Ozcan
+2. Call Ozkan
 
 
 ## Customizing / questions

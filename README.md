@@ -24,8 +24,8 @@ This Compose file contains the following environment variables:
 
 ## Access to PgAdmin: 
 * **URL:** `http://localhost:5050`
-* **Username:** pgadmin4@pgadmin.org (as a default)
-* **Password:** admin (as a default)
+* **Username:** aytac.ozkan@inra.fr (as a default)
+* **Password:** v2kGBDUaGjXK2VuPyf5R64VS (as a default)
 
 
 ## Generate certificates
@@ -78,6 +78,6 @@ Finally, generate the certificate itself:
 `openssl x509 -req -in admin.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out admin.pem`
 
 
-Rather than run these commands one by one above, simply run shell script file at the project root that stated below with this command and complete what prompt asked.
+Rather than run these commands one by one above, simply run shell script file at the project root that stated with this command and complete what prompt asked.
 
 `sh ./generate-certificates.sh`
