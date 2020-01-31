@@ -1,6 +1,7 @@
 # In-Sylva Infrastructure
 
-## Requirements:
+## Requirements
+
 * docker >= 17.12.0+
 * docker-compose
 
@@ -8,7 +9,28 @@
 * Run this command `docker-compose --compatibility up -d`
 * Run this command for stats of the container (ex: Mem & CPU usage.) `docker stats postgres_container`
 
+## Bash access to containers
+
+To create an interactive Bash session in a container, run `docker ps` to find the container ID. Then run:
+
+`docker exec -it <container-id> /bin/bash`
+
+## Important settings
+
+For production workloads, make sure the Linux setting `vm.max_map_count` is set to at least 262144. On the Open Distro for Elasticsearch Docker image, this setting is the default. To verify, start a Bash session in the container and run:
+
+`cat /proc/sys/vm/max_map_count`
+
+To increase this value, you have to modify the Docker image. On the RPM install, you can add this setting to the host machine’s `/etc/sysctl.conf` file by adding the following line:
+
+`vm.max_map_count=262144`
+
+Then run `sudo sysctl -p` to reload.
+
+The docker-compose.yml file also contains several key settings: `bootstrap.memory_lock=true, ES_JAVA_OPTS=-Xms512m -Xmx512m`, nofile 65536 and port 9600. Respectively, these settings disable memory swapping (along with memlock), set the size of the Java heap (we recommend half of system RAM), set a limit of 65536 open files for the Elasticsearch user, and allow you to access Performance Analyzer on port 9600.
+
 ## Environments
+
 This Compose file contains the following environment variables:
 
 * `POSTGRES_USER` the default value is **insylva_admin_pg**
@@ -29,6 +51,8 @@ This Compose file contains the following environment variables:
 
 
 ## Generate certificates
+
+Able to run well secured Elk stack instances with `OpenDistro` on docker, we have to generate some SSL sertificates as below.
 
 To generate the necessary certificates, you have to install OpenSSL on your local or host machine.
 
@@ -59,8 +83,6 @@ Next, use the key to generate a self-signed certificate for the root CA (Certifi
 Follow the prompts to specify details for our organization (INRA). Together, these details form the distinguished name (DN) of your CA.
 
 ## Generate an admin certificate
-
-Able to run well secured Elk stack instances with `OpenDistro` on docker, we have to generate some SSL sertificates as below.
 
 To generate an admin certificate, first create a new key:
 
