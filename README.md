@@ -58,8 +58,9 @@ Next, use the key to generate a self-signed certificate for the root CA (Certifi
 
 Follow the prompts to specify details for our organization (INRA). Together, these details form the distinguished name (DN) of your CA.
 
-
 ## Generate an admin certificate
+
+Able to run well secured Elk stack instances with `OpenDistro` on docker, we have to generate some SSL sertificates as below.
 
 To generate an admin certificate, first create a new key:
 
@@ -81,3 +82,12 @@ Finally, generate the certificate itself:
 Rather than run these commands one by one above, simply run shell script file at the project root that stated with this command and complete what prompt asked.
 
 `sh ./generate-certificates.sh`
+
+* Country Name (2 letter code) [XX]:FR
+* State or Province Name (full name) []:PACA
+* Locality Name (eg, city) [Default City]:AVIGNON
+* Organization Name (eg, company) [Default Company Ltd]:INRA
+* Organizational Unit Name (eg, section) []:IN-SYLVA
+* Common Name (eg, your name or your server's hostname) []:*.in-sylva.fr
+
+`subject=C = FR, ST = PACA, L = AVIGNON, O = INRA, OU = IN-SYLVA, CN = *.in-sylva.fr`
