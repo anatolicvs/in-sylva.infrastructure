@@ -5,7 +5,6 @@
 * docker >= 17.12.0+
 * docker-compose
 
-
 * Run this command `docker-compose --compatibility up -d`
 * Run this command for stats of the container (ex: Mem & CPU usage.) `docker stats postgres_container`
 
@@ -39,28 +38,29 @@ This Compose file contains the following environment variables:
 * `PGADMIN_DEFAULT_EMAIL` the default value is **aytac.ozkan@inra.fr**
 * `PGADMIN_DEFAULT_PASSWORD` the default value is **v2kGBDUaGjXK2VuPyf5R64VS**
 
-## Access to postgres: 
+## Access to postgres
+
 * `localhost:5432`
 * **Username:** postgres (as a default)
 * **Password:** changeme (as a default)
 
-## Access to PgAdmin: 
+## Access to PgAdmin
+
 * **URL:** `http://localhost:5050`
 * **Username:** aytac.ozkan@inra.fr (as a default)
 * **Password:** v2kGBDUaGjXK2VuPyf5R64VS (as a default)
 
-
-## Generate certificates
+## Generate Certificates
 
 Able to run well secured Elk stack instances with `OpenDistro` on docker, we have to generate some SSL sertificates as below.
 
 To generate the necessary certificates, you have to install OpenSSL on your local or host machine.
 
- For for example: 
+ For for example:
 
  On fedora : `sudo yum install openssl`
 
- ### Generate a private key
+### Generate a private key
 
 The first step in this process is to generate a private key using the `genrsa` command. As the name suggests, you should keep this file private.
 
@@ -99,7 +99,6 @@ Next, create a certificate signing request (CSR). This file acts as an applicati
 Finally, generate the certificate itself:
 
 `openssl x509 -req -in admin.csr -CA root-ca.pem -CAkey root-ca-key.pem -CAcreateserial -sha256 -out admin.pem`
-
 
 Rather than run these commands one by one above, simply run shell script file at the project root that stated with this command and complete what prompt asked.
 
