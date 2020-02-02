@@ -21,7 +21,7 @@ For production workloads, make sure the Linux setting `vm.max_map_count` is set 
 
 `cat /proc/sys/vm/max_map_count`
 
-To increase this value, you have to modify the Docker image. On the RPM install, you can add this setting to the host machine’s `/etc/sysctl.conf` file by adding the following line:
+To increase this value, you have to modify the Docker image. On the RPM install, you can add this setting to the host machines `/etc/sysctl.conf` file by adding the following line:
 
 `vm.max_map_count=262144`
 
@@ -39,12 +39,14 @@ This Compose file contains the following environment variables:
 * `PGADMIN_DEFAULT_EMAIL` the default value is **aytac.ozkan@inra.fr**
 * `PGADMIN_DEFAULT_PASSWORD` the default value is **v2kGBDUaGjXK2VuPyf5R64VS**
 
-## Access to postgres: 
+## Access to postgres
+
 * `localhost:5432`
 * **Username:** postgres (as a default)
 * **Password:** changeme (as a default)
 
-## Access to PgAdmin: 
+## Access to PgAdmin
+
 * **URL:** `http://localhost:5050`
 * **Username:** aytac.ozkan@inra.fr (as a default)
 * **Password:** v2kGBDUaGjXK2VuPyf5R64VS (as a default)
