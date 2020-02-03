@@ -1,0 +1,49 @@
+---
+_meta:
+  type: "roles"
+  config_version: 2
+esb_1:
+  reserved: false
+  hidden: false
+  description: "Migrated from v6 (all types mapped)"
+  cluster_permissions:
+  - "OPENDISTRO_SECURITY_CLUSTER_COMPOSITE_OPS"
+  index_permissions:
+  - index_patterns:
+    - "esb-prod-1"
+    dls: null
+    fls: null
+    masked_fields: null
+    allowed_actions:
+    - "*"
+  tenant_permissions: []
+esb_5:
+  reserved: false
+  hidden: false
+  description: "Migrated from v6 (all types mapped)"
+  cluster_permissions:
+  - "OPENDISTRO_SECURITY_CLUSTER_COMPOSITE_OPS"
+  index_permissions:
+  - index_patterns:
+    - "esb-prod-5"
+    dls: null
+    fls: null
+    masked_fields: null
+    allowed_actions:
+    - "*"
+  tenant_permissions: []
+esb_3:
+  reserved: false
+  hidden: false
+  description: "Migrated from v6 (all types mapped)"
+  cluster_permissions:
+  - "OPENDISTRO_SECURITY_CLUSTER_COMPOSITE_OPS"
+  index_permissions:
+  - index_patterns:
+    - "esb-prod-3"
+    dls: null
+    fls: null
+    masked_fields: null
+    allowed_actions:
+    - "*"
+  tenant_permissions: []
