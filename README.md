@@ -111,4 +111,4 @@ Rather than run these commands one by one above, simply run shell script file at
 * Organizational Unit Name (eg, section) []:IN-SYLVA
 * Common Name (eg, your name or your server's hostname) []:*.in-sylva.fr
 
-`subject=C = FR, ST = PACA, L = AVIGNON, O = INRA, OU = IN-SYLVA, CN = *.in-sylva.fr`
+`subject=C = FR, ST = PACA, L = AVIGNON, O = INRA, OU = INSYLVA, CN = N`

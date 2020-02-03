@@ -86,7 +86,7 @@ services:
       - node.name=odfe-node1
       - discovery.seed_hosts=odfe-node1,odfe-node2
       - cluster.initial_master_nodes=odfe-node1,odfe-node2
-      - bootstrap.memory_lock=truPe # along with the memlock settings below, disables swapping
+      - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
     ulimits:
       memlock:
@@ -151,6 +151,8 @@ services:
     container_name: odfe-kibana
     ports:
       - 5601:5601
+    volumes:
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     expose:
       - "5601"
     environment:
