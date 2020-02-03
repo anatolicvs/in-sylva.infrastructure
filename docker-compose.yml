@@ -147,6 +147,7 @@ services:
       - ./action_groups.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/action_groups.yml
     networks:
       - app-network
+    restart: unless-stopped
 
   kibana:
     image: amazon/opendistro-for-elasticsearch-kibana:1.3.0
@@ -162,6 +163,7 @@ services:
       ELASTICSEARCH_HOSTS: https://odfe-node1:9200
     networks:
       - app-network
+    restart: unless-stopped
 
 volumes:
   postgres-data:
