@@ -23,4 +23,6 @@ else
     BIN_PATH="$JAVA_HOME/bin/java"
 fi
 
-"$BIN_PATH" $JAVA_OPTS -cp "$DIR/../../opendistro_security_ssl/*:$DIR/../*:$DIR/../deps/*:$DIR/../../../lib/*" com.amazon.opendistroforelasticsearch.security.tools.Hasher "$@"
+echo "$DIR/../../opendistro_security_ssl/*:$DIR/../*:$DIR/../deps/*:$DIR/../../../lib/*"
+
+# "$BIN_PATH" $JAVA_OPTS -cp "$DIR/../../opendistro_security_ssl/*:$DIR/../*:$DIR/../deps/*:$DIR/../../../lib/*" com.amazon.opendistroforelasticsearch.security.tools.Hasher "$@"
