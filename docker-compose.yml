@@ -114,6 +114,8 @@ services:
       - 9600:9600 # required for Performance Analyzer
     networks:
       - app-network
+    restart: unless-stopped
+  
   odfe-node2:
     image: amazon/opendistro-for-elasticsearch:1.3.0
     container_name: odfe-node2

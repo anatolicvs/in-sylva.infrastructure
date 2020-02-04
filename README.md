@@ -115,23 +115,30 @@ Rather than run these commands one by one above, simply run shell script file at
 
 ## Internal Users for Elk Stack
 
-`java -cp "./*" com.amazon.opendistroforelasticsearch.security.tools.Hasher "-p ${password=1ns1l4pr0j3ct}"`
+### internal_users.yml
+
+This file contains any initial users that you want to add to the Security plugin’s internal user database.
+The file format requires a hashed password. To generate one, run
+
+```properties
+    cd security/tools && java -cp "./*" com.amazon.opendistroforelasticsearch.security.tools.Hasher "-p ${password=your_password}"
+```
 
 ``` yaml
 admin:
-    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
+    hash: "$2y$12$HDfDjEmrA6FjrhJ6X4qso.01PaMvWoeuCCF3S2f6ZAA6z5om92Mgq"
     reserved: true
     backend_roles:
         - "admin"
     description: "In-Sylva admin user elkstack"
 
 kibanaserver:
-    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
+    hash: "$2y$12$5If1RBIww9qUNYSmeda1b.x8UlL7z1fjhH9oLUgTwuNHFWrnjcOBu"
     reserved: true
     description: "In-Sylva kibanaserver user"
 
 kibanaro:
-    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
+    hash: "$2y$12$Ip/adRd.cfdTb7pT.i.UUOedeCWbvmQP3e7XFqSedshOWOFVYOqjO"
     reserved: false
     backend_roles:
         - "kibanauser"
@@ -143,23 +150,37 @@ kibanaro:
     description: "In-Sylva kibanaro user"
 
 logstash:
-    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
+    hash: "$2y$12$HlY9kVz3a1aiEhLIza9u9uNlsfXm6WTRz1cwGWCXwGR3RyEw/sA8G"
     reserved: false
     backend_roles:
         - "logstash"
     description: "In-Sylva logstash user"
 
 readall:
-    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
+    hash: "$2y$12$7dyrvh75JXmORh4lWt5tXu.sP9djoatha04hJ1zuGTkIsgKeH3bxi"
     reserved: false
     backend_roles:
         - "readall"
     description: "In-Sylva readall user"
 
 snapshotrestore:
-    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
+    hash: "$2y$12$nAopFvn4Ni0bMOKFui6Q7eLXoRSE20XPPJEI6ffpc7vVO9uM6D9sy"
     reserved: false
     backend_roles:
         - "snapshotrestore"
-    description: "In-Sylva snapshotrestore user"`
+    description: "In-Sylva snapshotrestore user"
 ```
+
+## Validate YAML
+
+`elasticsearch.yml` and the files in `opendistro_security/securityconfig/` are in the YAML format. A linter like YAML Lint can help verify that you don’t have any formatting errors.
+
+### View contents of PEM certificates
+
+You can use OpenSSL to display the content of each PEM certificate:
+
+`openssl x509 -subject -nameopt RFC2253 -noout -in node1.pem`
+
+Then ensure that the value matches the one in `elasticsearch.yml`.
+For more complete information on a certificate:
+`openssl x509 -in node1.pem -text -noout`
