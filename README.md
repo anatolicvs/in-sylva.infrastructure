@@ -115,23 +115,25 @@ Rather than run these commands one by one above, simply run shell script file at
 
 ## Internal Users for Elk Stack
 
-`java -cp "./*" com.amazon.opendistroforelasticsearch.security.tools.Hasher "-p ${password}"`
+
+
+`java -cp "./*" com.amazon.opendistroforelasticsearch.security.tools.Hasher "-p ${password=1ns1l4pr0j3ct}"`
 
 ``` yaml
 in-sylva-admin:
-    hash: "${password}"
+    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
     reserved: true
     backend_roles:
         - "admin"
     description: "In-Sylva admin user elkstack"
 
 in-sylva-kibanaserver:
-    hash: "${password}"
+    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
     reserved: true
     description: "In-Sylva kibanaserver user"
 
 in-sylva-kibanaro:
-    hash: "${password}"
+    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
     reserved: false
     backend_roles:
         - "kibanauser"
@@ -143,21 +145,21 @@ in-sylva-kibanaro:
     description: "In-Sylva kibanaro user"
 
 in-sylva-logstash:
-    hash: "${password}"
+    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
     reserved: false
     backend_roles:
         - "logstash"
     description: "In-Sylva logstash user"
 
 readall:
-    hash: "${password}"
+    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
     reserved: false
     backend_roles:
         - "readall"
     description: "In-Sylva readall user"
 
 snapshotrestore:
-    hash: "${password}"
+    hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
     reserved: false
     backend_roles:
         - "snapshotrestore"
