@@ -1,5 +1,5 @@
 server.name: kibana
-server.host: "0"
+server.host: "0.0.0.0"
 
 opendistro_security.auth.type: "basicauth"
 opendistro_security.basicauth.enabled: false
