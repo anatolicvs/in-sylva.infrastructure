@@ -1,5 +1,7 @@
 # In-Sylva Infrastructure
 
+![](logo.png)
+
 ## Requirements
 
 * docker >= 17.12.0+
@@ -120,8 +122,10 @@ Rather than run these commands one by one above, simply run shell script file at
 This file contains any initial users that you want to add to the Security plugin’s internal user database.
 The file format requires a hashed password. To generate one, run
 
+* **insylva_password:** v2kGBDUaGjXK2VuPyf5R64VS (as a default)
+
 ```properties
-    cd security/tools && java -cp "./*" com.amazon.opendistroforelasticsearch.security.tools.Hasher "-p ${password=your_password}"
+    cd security/tools && java -cp "./*" com.amazon.opendistroforelasticsearch.security.tools.Hasher "-p ${password=insylva_password}"
 ```
 
 ``` yaml
@@ -179,8 +183,8 @@ snapshotrestore:
 
 You can use OpenSSL to display the content of each PEM certificate:
 
-`openssl x509 -subject -nameopt RFC2253 -noout -in node1.pem`
+`openssl x509 -subject -nameopt RFC2253 -noout -in admin.pem`
 
 Then ensure that the value matches the one in `elasticsearch.yml`.
 For more complete information on a certificate:
-`openssl x509 -in node1.pem -text -noout`
+`openssl x509 -in admin.pem -text -noout`
