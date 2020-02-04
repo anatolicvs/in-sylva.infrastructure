@@ -7,7 +7,7 @@
         "latex",
         "plaintext"
     ],
-    "maven.view": "hierarchical",
+    "maven.view": "flat",
     "java.dependency.packagePresentation": "hierarchical",
     "java.dependency.syncWithFolderExplorer": false
 }

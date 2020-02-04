@@ -40,7 +40,7 @@ complex-role:
         - "ldap-analyst"
     hosts: []
     users:
-        - "new-user"
+        - "in-sylva-admin"
     and_backend_roles: []
 _meta:
     type: "rolesmapping"

@@ -8,9 +8,9 @@ opendistro_security.ssl.http.pemkey_filepath: node-key.pem
 opendistro_security.ssl.http.pemtrustedcas_filepath: root-ca.pem
 opendistro_security.allow_default_init_securityindex: true
 opendistro_security.authcz.admin_dn:
-    - "C=FR, ST=PACA, L=AVIGNON, O=INRA, OU=INSYLVA, CN=N"
+    - "CN=insylva.fr,OU=INSYLVA,O=INRA,L=AVIGNON,ST=PACA,C=FR"
 opendistro_security.nodes_dn:
-    - "C=FR, ST=PACA, L=AVIGNON, O=INRA, OU=INSYLVA, CN=N"
+    - "CN=insylva.fr,OU=INSYLVA,O=INRA,L=AVIGNON,ST=PACA,C=FR"
 opendistro_security.audit.type: internal_elasticsearch
 opendistro_security.enable_snapshot_restore_privilege: true
 opendistro_security.check_snapshot_restore_write_privileges: true

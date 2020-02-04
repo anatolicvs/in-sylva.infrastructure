@@ -115,24 +115,22 @@ Rather than run these commands one by one above, simply run shell script file at
 
 ## Internal Users for Elk Stack
 
-
-
 `java -cp "./*" com.amazon.opendistroforelasticsearch.security.tools.Hasher "-p ${password=1ns1l4pr0j3ct}"`
 
 ``` yaml
-in-sylva-admin:
+admin:
     hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
     reserved: true
     backend_roles:
         - "admin"
     description: "In-Sylva admin user elkstack"
 
-in-sylva-kibanaserver:
+kibanaserver:
     hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
     reserved: true
     description: "In-Sylva kibanaserver user"
 
-in-sylva-kibanaro:
+kibanaro:
     hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
     reserved: false
     backend_roles:
@@ -144,7 +142,7 @@ in-sylva-kibanaro:
         attribute3: "value3"
     description: "In-Sylva kibanaro user"
 
-in-sylva-logstash:
+logstash:
     hash: "$2y$12$RM8k8TUoiLN69AqZyVLpPOa.g4EYuXBhEjG1//Bh31ZsRGb3Vpz4K"
     reserved: false
     backend_roles:
