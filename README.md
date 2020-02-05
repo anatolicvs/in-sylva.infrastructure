@@ -14,7 +14,7 @@
 
 ## Attention
 
-You do not need to generate CA or edit docker-compose.yml file unless you needed it. If you want to change those files and settings, please read the instructions as below carefully.
+You do not need to generate CA (pem file with openssl) or edit docker-compose.yml file unless you needed it. If you want to change those files and settings, please read the instructions as below carefully.
 
 ## Bash access to containers
 
