@@ -10,6 +10,8 @@
 * Run this command `docker-compose --compatibility up -d`
 * Run this command for stats of the container (ex: Mem & CPU usage.) `docker stats postgres_container`
 
+[![asciicast](https://asciinema.org/a/aoUNfjZ2okPW5WFltYSQqmrsm.svg)](https://asciinema.org/a/aoUNfjZ2okPW5WFltYSQqmrsm)
+
 ## Bash access to containers
 
 To create an interactive Bash session in a container, run `docker ps` to find the container ID. Then run:
