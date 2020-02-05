@@ -12,6 +12,10 @@
 
 [![asciicast](https://asciinema.org/a/aoUNfjZ2okPW5WFltYSQqmrsm.svg)](https://asciinema.org/a/aoUNfjZ2okPW5WFltYSQqmrsm)
 
+## Attention
+
+You do not need to generate CA or edit docker-compose.yml file unless you needed it. If you want to change those files and settings, please read the instructions as below carefully.
+
 ## Bash access to containers
 
 To create an interactive Bash session in a container, run `docker ps` to find the container ID. Then run:
