@@ -128,7 +128,7 @@ Rather than run these commands one by one above, simply run shell script file at
 This file contains any initial users that you want to add to the Security plugin’s internal user database.
 The file format requires a hashed password. To generate one, run
 
-* **insylva_password:** v2kGBDUaGjXK2VuPyf5R64VS (as a default)
+* **insylva_password:** InSylva146544 (as a default)
 
 ```properties
     cd security/tools && java -cp "./*" com.amazon.opendistroforelasticsearch.security.tools.Hasher "-p ${password=insylva_password}"
