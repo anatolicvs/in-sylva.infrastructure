@@ -9,19 +9,19 @@ _meta:
 # In-Sylva Infrastructure users for the ELk Stack
 
 admin:
-    hash: "$2y$12$hAtkPeGX/1srGwmmJIypt.PcyICCgjzaeyiYTR4qDt3B99fnvCC7S"
+    hash: "$2y$12$bT/FBUVFtGHBPXOPKOhM7uzUx2ZTMm2Bbou7serV6CYM9r0l45/8K"
     reserved: true
     backend_roles:
         - "admin"
     description: "In-Sylva admin user elkstack"
 
 kibanaserver:
-    hash: "$2y$12$sn5AQa9bh6Ad.Ti131LC2eM9GMGRinaHX6jwFsUtNnDQRydWtjEka"
+    hash: "$2y$12$Zj1.H9Xi52kwc4nlLiPjqeiDXZX8w94ojPycs85JCycMyhw2Htna."
     reserved: true
     description: "In-Sylva kibanaserver user"
 
 kibanaro:
-    hash: "$2y$12$8ZRShNKnZyIWtbgd5w8nyOFQIbM0phc3gnEgZTpNjfCPVxTxyXx7W"
+    hash: "$2y$12$gPw6BCQltBhndI5xr97Aj.2HnAB.bSaNEPaXk.Fz/XqrSC1UYpMTi"
     reserved: false
     backend_roles:
         - "kibanauser"
@@ -33,21 +33,21 @@ kibanaro:
     description: "In-Sylva kibanaro user"
 
 logstash:
-    hash: "$2y$12$8ZRShNKnZyIWtbgd5w8nyOFQIbM0phc3gnEgZTpNjfCPVxTxyXx7W"
+    hash: "$2y$12$cFfGKnBbROliIBKkQwC2S.T2gVB70j/hqBvfAQETm5p7f0.XdyUZ."
     reserved: false
     backend_roles:
         - "logstash"
     description: "In-Sylva logstash user"
 
 readall:
-    hash: "$2y$12$8ZRShNKnZyIWtbgd5w8nyOFQIbM0phc3gnEgZTpNjfCPVxTxyXx7W"
+    hash: "$2y$12$VEjwX9pWB7Z1pMg5xCxDcOk.JJuJl7iwE6CfriEL4xg0R995CxrpG"
     reserved: false
     backend_roles:
         - "readall"
     description: "In-Sylva readall user"
 
 snapshotrestore:
-    hash: "$2y$12$8ZRShNKnZyIWtbgd5w8nyOFQIbM0phc3gnEgZTpNjfCPVxTxyXx7W"
+    hash: "$2y$12$9PSgtOuMMM7l5xZ6SwB.P.EVdAvZvyWvYylIK4NeW0acTkjMMBm5a"
     reserved: false
     backend_roles:
         - "snapshotrestore"
