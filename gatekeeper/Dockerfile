@@ -40,5 +40,6 @@ ENV PORT 3000
 
 EXPOSE 5000
 
+WORKDIR /home/app/in-sylva.gatekeeper/
 
 CMD ["npm", "run", "start:prod"]
