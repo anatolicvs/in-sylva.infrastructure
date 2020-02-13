@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run -d -p 5000:5000 in-sylva.gatekeeper:latest
+docker run -d -p 8000:8000 in-sylva.gatekeeper:latest
