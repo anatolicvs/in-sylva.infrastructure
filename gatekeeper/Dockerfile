@@ -1,43 +1,36 @@
-FROM alpine as intermediate
-LABEL stage=intermediate
+FROM node:latest
 
-RUN apk update && \
-    apk add --update git && \
-    apk add --update openssh
+RUN apt-get update && \
+    apt-get install -y  git \
+    openssh-server
 
-EXPOSE 22
+RUN mkdir /var/run/sshd
+EXPOSE 22 
 
 ARG SSH_KEY
 ARG SSH_KEY_PASSPHRASE
-
 RUN chmod go-w /root
 # 1. Create the SSH directory.
 # 2. Set the required permissions.
 RUN mkdir -p /root/.ssh && \
-    chmod 700 /root/.ssh 
+    chmod 600 /root/.ssh 
 
 # 1. Populate the private key file.
 # 2. Set the required permissions.
-RUN chmod -R 600 /root/.ssh/ && \ 
-    echo "$SSH_KEY" > /root/.ssh/id_rsa_insylva_docker && \
-    echo "$SSH_KEY_PASSPHRASE" > /root/.ssh/id_rsa_insylva_docker.pub 
+RUN echo "$SSH_KEY" >> /root/.ssh/id_rsa && \
+    echo "$SSH_KEY_PASSPHRASE" >> /root/.ssh/id_rsa.pub 
+
+RUN chmod -R 600 /root/.ssh/id_rsa && \
+    chmod -R 600 /root/.ssh/id_rsa.pub 
 
 # 1. Add github to our list of known hosts for ssh.
-RUN ssh-keyscan -t rsa forgemia.inra.fr >> ~/.ssh/known_hosts
+RUN ssh-keyscan -Ht rsa forgemia.inra.fr,147.100.164.13 >> ~/.ssh/known_hosts
 
 RUN mkdir /home/app/ 
 
 WORKDIR /home/app/
 
 RUN git clone git@forgemia.inra.fr:in-sylva-development/in-sylva.gatekeeper.git
-
-FROM node:latest
-
-RUN mkdir /home/app/ 
-
-WORKDIR /home/app/
-
-COPY --from=intermediate /home/app /home/app
 
 RUN cd ./in-sylva.gatekeeper && npm install
 
