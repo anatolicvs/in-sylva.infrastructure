@@ -22,9 +22,9 @@ RUN chmod -R 600 /root/.ssh/id_rsa && \
 
 RUN ssh-keyscan -Ht rsa forgemia.inra.fr,147.100.164.13 >> ~/.ssh/known_hosts
 
-RUN mkdir /home/app/ 
+RUN mkdir /app/ 
 
-WORKDIR /home/app/
+WORKDIR /app/
 
 RUN git clone git@forgemia.inra.fr:in-sylva-development/in-sylva.source.manager.git
 
@@ -36,6 +36,6 @@ ENV PORT 5000
 
 EXPOSE 5000
 
-WORKDIR /home/app/in-sylva.source.manager/
+WORKDIR /app/in-sylva.source.manager/
 
 CMD ["npm", "run", "start:prod"]
