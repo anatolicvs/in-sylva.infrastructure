@@ -32,9 +32,9 @@ RUN cd ./in-sylva.gatekeeper && npm install
 
 ENV NODE_ENV production
 ENV PROCESS_TYPE web
-ENV PORT 8000
+ENV PORT 4000
 
-EXPOSE 8000
+EXPOSE 4000
 
 WORKDIR /app/in-sylva.gatekeeper/
 

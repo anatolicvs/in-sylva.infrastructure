@@ -173,7 +173,7 @@ services:
     environment:
       - network.host=0.0.0.0
     ports:
-      - 8000:8000
+      - 4000:4000
     networks:
       - app-network
     restart: unless-stopped
