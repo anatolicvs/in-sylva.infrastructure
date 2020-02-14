@@ -3,6 +3,7 @@ version: "3"
 services:
   postgres:
     image: in-sylva-postgres:latest
+    container_name: in-sylva-postgres
     volumes:
       - ./data.sql:/docker-entrypoint-initdb.d/data.sql
       - ./postgres-data:/var/lib/postgresql/data
@@ -16,6 +17,7 @@ services:
       - app-network
   keycloak:
     image: in-sylva.keycloak:latest
+    container_name: in-sylva.keycloak
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
@@ -174,6 +176,8 @@ services:
       - network.host=0.0.0.0
     ports:
       - 4000:4000
+    environment: 
+      DB_HOST: http://in-sylva-postgres
     networks:
       - app-network
     restart: unless-stopped
@@ -183,6 +187,11 @@ services:
     container_name: in-sylva.source.manager
     environment:
       - network.host=0.0.0.0
+    environment: 
+      IN_SYLVA_GATEKEEPER_HOST: http://in-sylva.gatekeeper
+      IN_SYLVA_GATEKEEPER_PORT: 4000
+      MONGO_HOST: http://in_sylva_mongodb
+      DB_HOST: http://in-sylva-postgres
     ports:
       - 5000:5000
     networks:
