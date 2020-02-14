@@ -1,5 +1,4 @@
-# build environment
-FROM node:latest as portal
+FROM node:latest
 
 RUN apt-get update && \
     apt-get install -y  git \
@@ -27,30 +26,16 @@ RUN mkdir /app/
 
 WORKDIR /app/
 
-RUN git clone git@forgemia.inra.fr:in-sylva-development/in-sylva.search.app.git
+RUN git clone git@forgemia.inra.fr:in-sylva-development/in-sylva.user.login.git
 
-RUN cd ./in-sylva.search.app && npm install
-
-WORKDIR /app/in-sylva.search.app/
-
-ENV PATH /app/in-sylva.search.app/node_modules/.bin:$PATH
-
-RUN yarn build
-
-# production environment
-FROM nginx:latest
-
-COPY --from=portal /app/in-sylva.search.app/build /usr/share/nginx/html
-
-RUN rm /etc/nginx/conf.d/default.conf
-
-COPY nginx/nginx.conf /etc/nginx/conf.d
+RUN cd ./in-sylva.user.login && yarn && yarn build
 
 ENV NODE_ENV production
 ENV PROCESS_TYPE web
-ENV PORT 8082
+ENV PORT 8080
 
-EXPOSE 8082
-EXPOSE 80
+EXPOSE 8080
 
-CMD ["nginx", "-g", "daemon off;"]
+WORKDIR /app/in-sylva.user.login/
+
+CMD ["npm", "run", "start"]
