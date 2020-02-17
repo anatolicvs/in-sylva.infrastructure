@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t in-sylva-postgres .
+docker build -t in-sylva.postgres .
