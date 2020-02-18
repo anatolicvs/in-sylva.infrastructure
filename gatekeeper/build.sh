@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# sh ./build.sh id_rsa_insylva_docker
  while [ "$1" != "" ]; do
    SSH_KEY=$(cat ~/.ssh/$1)
    SSH_KEY_PASSPHRASE=$(cat ~/.ssh/$1.pub)

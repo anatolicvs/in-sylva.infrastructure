@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker build --tag in_sylva_keycloak .
+docker build --tag in-sylva.keycloak .
 
