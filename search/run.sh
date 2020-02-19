@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker run -d -p 3001:3000 in-sylva.search:latest
+docker run -d -p 3003:3000 in-sylva.search:latest

@@ -33,6 +33,7 @@ RUN cd ./in-sylva.search.app && npm install
 
 WORKDIR /app/in-sylva.search.app/
 
+ENV PORT=3000
 ENV PATH /app/in-sylva.search.app/node_modules/.bin:$PATH
 
 RUN yarn build
@@ -46,10 +47,6 @@ RUN rm /etc/nginx/conf.d/default.conf
 
 COPY nginx/nginx.conf /etc/nginx/conf.d
 
-ENV NODE_ENV production
-ENV PROCESS_TYPE web
-ENV PORT 3001
-
-EXPOSE 3001
+EXPOSE 3000
 
 CMD ["nginx", "-g", "daemon off;"]

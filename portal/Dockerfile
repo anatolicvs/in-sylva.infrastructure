@@ -34,7 +34,7 @@ RUN cd ./in-sylva.portal && npm install
 WORKDIR /app/in-sylva.portal/
 
 ENV PATH /app/in-sylva.portal/node_modules/.bin:$PATH
-
+ENV PORT=3000
 RUN yarn build
 
 # production environment
@@ -45,10 +45,6 @@ COPY --from=portal /app/in-sylva.portal/build /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 
 COPY nginx/nginx.conf /etc/nginx/conf.d
-
-ENV NODE_ENV production
-ENV PROCESS_TYPE web
-ENV PORT 3000
 
 EXPOSE 3000
 EXPOSE 80

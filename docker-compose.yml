@@ -223,13 +223,13 @@ services:
     image: in-sylva.portal:latest
     container_name: in-sylva.portal
     environment:
-      - network.host: 0.0.0.0
-      - REACT_APP_IN_SYLVA_GATEKEEPER_HOST: http://in-sylva.gatekeeper 
-      - REACT_APP_IN_SYLVA_GATEKEEPER_PORT: 4000 
-      - REACT_APP_IN_SYLVA_SOURCE_MANAGER_HOST: http://in-sylva.source.manager
-      - REACT_APP_IN_SYLVA_SOURCE_MANAGER_PORT: 5000
-      - REACT_APP_IN_SYLVA_KEYCLOAK_HOST: http://in-sylva.keycloak
-      - REACT_APP_IN_SYLVA_KEYCLOAK_PORT: 7000
+      network.host: 0.0.0.0
+      REACT_APP_IN_SYLVA_GATEKEEPER_HOST: http://in-sylva.gatekeeper 
+      REACT_APP_IN_SYLVA_GATEKEEPER_PORT: 4000 
+      REACT_APP_IN_SYLVA_SOURCE_MANAGER_HOST: http://in-sylva.source.manager
+      REACT_APP_IN_SYLVA_SOURCE_MANAGER_PORT: 5000
+      REACT_APP_IN_SYLVA_KEYCLOAK_HOST: http://in-sylva.keycloak
+      REACT_APP_IN_SYLVA_KEYCLOAK_PORT: 7000
     ports:
       - 3000:3000
     networks:
@@ -237,6 +237,21 @@ services:
     restart: unless-stopped
 
   search:
+    image: in-sylva.search:latest
+    container_name: in-sylva.search
+    environment: 
+      network.host: 0.0.0.0
+      REACT_APP_IN_SYLVA_GATEKEEPER_HOST: http://in-sylva.gatekeeper 
+      REACT_APP_IN_SYLVA_GATEKEEPER_PORT: 4000 
+      REACT_APP_IN_SYLVA_SOURCE_MANAGER_HOST: http://in-sylva.source.manager
+      REACT_APP_IN_SYLVA_SOURCE_MANAGER_PORT: 5000
+      REACT_APP_IN_SYLVA_KEYCLOAK_HOST: http://in-sylva.keycloak
+      REACT_APP_IN_SYLVA_KEYCLOAK_PORT: 7000
+    ports:
+      - 3001:3000
+    networks:
+      - app-network
+    restart: unless-stopped
 
   portainer:
     image: portainer/portainer
