@@ -48,9 +48,8 @@ COPY nginx/nginx.conf /etc/nginx/conf.d
 
 ENV NODE_ENV production
 ENV PROCESS_TYPE web
-ENV PORT 8082
+ENV PORT 3001
 
-EXPOSE 8082
-EXPOSE 80
+EXPOSE 3001
 
 CMD ["nginx", "-g", "daemon off;"]
