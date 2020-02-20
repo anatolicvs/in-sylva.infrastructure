@@ -65,9 +65,6 @@ WORKDIR /usr/share/nginx/html
 COPY ./env.sh .
 COPY .env .
 
-# Add bash
-RUN apk add --no-cache bash
-
 # Run script which initializes env vars to fs
 RUN chmod +x env.sh
 RUN ./env.sh
