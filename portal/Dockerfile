@@ -40,6 +40,10 @@ RUN yarn build
 # production environment
 FROM nginx:latest
 
+RUN apt-get update && apt-get install wget -y
+
+RUN apt-get update && apt-get install nginx-extras -y
+
 ARG REACT_APP_IN_SYLVA_GATEKEEPER_HOST
 ARG REACT_APP_IN_SYLVA_GATEKEEPER_PORT
 ARG REACT_APP_IN_SYLVA_SOURCE_MANAGER_HOST
@@ -59,7 +63,7 @@ COPY --from=portal /app/in-sylva.portal/build /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 
 COPY nginx/nginx.conf /etc/nginx/conf.d
-COPY nginx/gzip.conf /etc/nginx/conf.d
+# COPY nginx/gzip.conf /etc/nginx/conf.d
 
 WORKDIR /usr/share/nginx/html
 COPY ./env.sh .
