@@ -258,6 +258,7 @@ services:
     restart: unless-stopped
 
   portainer:
+    container_name: in-sylva.portainer
     image: portainer/portainer
     command: -H unix:///var/run/docker.sock
     restart: always
