@@ -36,6 +36,7 @@ services:
       - postgres
     networks:
       - app-network
+    restart: on-failure
 
   pgadmin:
     image: dpage/pgadmin4
