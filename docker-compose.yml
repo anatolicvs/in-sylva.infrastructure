@@ -19,6 +19,7 @@ services:
     image: in-sylva.keycloak:latest
     container_name: in-sylva.keycloak
     environment:
+      PROXY_ADDRESS_FORWARDING: "true"
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
       DB_DATABASE: keycloak
@@ -35,6 +36,7 @@ services:
       - postgres
     networks:
       - app-network
+
   pgadmin:
     image: dpage/pgadmin4
     deploy:
