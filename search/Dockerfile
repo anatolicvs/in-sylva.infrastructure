@@ -1,5 +1,5 @@
 # build environment
-FROM node:latest as portal
+FROM node:latest as search
 
 RUN apt-get update && \
     apt-get install -y  git \
@@ -41,11 +41,15 @@ RUN yarn build
 # production environment
 FROM nginx:latest
 
-COPY --from=portal /app/in-sylva.search.app/build /usr/share/nginx/html
+COPY --from=search /app/in-sylva.search.app/build /usr/share/nginx/html
 
 RUN rm /etc/nginx/conf.d/default.conf
 
 COPY nginx/nginx.conf /etc/nginx/conf.d
+
+WORKDIR /usr/share/nginx/html
+COPY ./env.sh .
+COPY .env .
 
 EXPOSE 3000
 

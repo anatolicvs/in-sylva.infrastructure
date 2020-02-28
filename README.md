@@ -194,3 +194,7 @@ You can use OpenSSL to display the content of each PEM certificate:
 Then ensure that the value matches the one in `elasticsearch.yml`.
 For more complete information on a certificate:
 `openssl x509 -in admin.pem -text -noout`
+
+### NOSPC: no space left on device' while running the nodeJS in docker
+
+`sudo docker system prune -af`

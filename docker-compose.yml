@@ -235,7 +235,7 @@ services:
       REACT_APP_IN_SYLVA_KEYCLOAK_HOST: http://in-sylva.keycloak
       REACT_APP_IN_SYLVA_KEYCLOAK_PORT: 7000
     ports:
-      - 3000:4000
+      - 3000:3000
     links: 
       - gatekeeper
       - keycloak
