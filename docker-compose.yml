@@ -265,13 +265,27 @@ services:
     container_name: in-sylva.portainer
     image: portainer/portainer
     command: -H unix:///var/run/docker.sock
-    restart: always
+    restart: unless-stopped
     ports:
       - 9000:9000
       - 8000:8000
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
+      - portainer_data:/data   
+
+  doc: 
+    container_name: in-sylva.doc 
+    image: in-sylva.doc:latest
+    restart: unless-stopped
+    volumes:
+      - ./docs:/app/docs
+      - ./doc/website/blog:/app/website/blog
+      - ./doc/website/core:/app/website/core
+      - ./doc/website/i18n:/app/website/i18n
+      - ./doc/website/pages:/app/website/pages
+    ports:
+      - 3004:3000
+      - 35729:35729
 
 volumes:
   postgres-data:
