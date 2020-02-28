@@ -42,6 +42,8 @@ FROM nginx:latest
 
 RUN apt-get update && apt-get install wget -y
 
+RUN apt-get install iputils-ping -y
+
 RUN apt-get update && apt-get install nginx-extras -y
 
 ARG REACT_APP_IN_SYLVA_GATEKEEPER_HOST
