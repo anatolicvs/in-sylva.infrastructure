@@ -187,6 +187,8 @@ services:
       DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS 
       DB_DATABASE: insylva 
       PORT: 4000
+      IN_SYLVA_KEYCLOAK_HOST: http://in-sylva.keycloak
+      IN_SYLVA_KEYCLOAK_PORT: 7000
     networks:
       - app-network
     restart: unless-stopped
