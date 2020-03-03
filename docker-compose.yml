@@ -21,6 +21,7 @@ services:
     image: in-sylva.keycloak:latest
     container_name: in-sylva.keycloak
     environment:
+      network.host: 0.0.0.0 
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
       DB_DATABASE: keycloak
@@ -187,10 +188,16 @@ services:
       DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS 
       DB_DATABASE: insylva 
       PORT: 4000
-      IN_SYLVA_KEYCLOAK_HOST: http://in-sylva.keycloak
-      IN_SYLVA_KEYCLOAK_PORT: 7000
+      IN_SYLVA_KEYCLOAK_HOST: http://keycloak
+      IN_SYLVA_KEYCLOAK_PORT: 8080
+      KEYCLOAK_USERNAME: insylva_admin
+      KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      KEYCLOAK_GRANT_TYPE: password
+      KEYCLOAK_CLIENT_ID: client_id
     networks:
       - app-network
+    links: 
+      - keycloak
     restart: unless-stopped
 
   source-manager:

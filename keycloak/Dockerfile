@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi8-minimal
+FROM centos:latest
 
 ENV KEYCLOAK_VERSION 9.0.0
 ENV JDBC_POSTGRES_VERSION 42.2.5
@@ -6,11 +6,10 @@ ENV JDBC_MYSQL_VERSION 5.1.46
 ENV JDBC_MARIADB_VERSION 2.2.3
 ENV JDBC_MSSQL_VERSION 7.4.1.jre11
 
-ENV LAUNCH_JBOSS_IN_BACKGROUND=1
-ENV PROXY_ADDRESS_FORWARDING=true
+ENV LAUNCH_JBOSS_IN_BACKGROUND 1
+ENV PROXY_ADDRESS_FORWARDING true
 ENV JBOSS_HOME /opt/jboss/keycloak
 ENV LANG en_US.UTF-8
-ENV network.host=0.0.0.0
 
 ARG GIT_REPO
 ARG GIT_BRANCH
@@ -18,12 +17,16 @@ ARG KEYCLOAK_DIST=https://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/keycloa
 
 USER root
 
-RUN microdnf update -y && microdnf install -y gzip hostname java-11-openjdk-headless openssl tar which && microdnf clean all
+RUN yum update -y && yum install -y gzip hostname java-11-openjdk-headless openssl tar which && yum clean all
 
 ADD tools /opt/jboss/tools
 RUN /opt/jboss/tools/build-keycloak.sh
 
-USER 1000
+RUN sed -i -e 's/<web-context>auth<\/web-context>/<web-context>keycloak\/auth<\/web-context>/' $JBOSS_HOME/standalone/configuration/standalone.xml
+RUN sed -i -e 's/<web-context>auth<\/web-context>/<web-context>keycloak\/auth<\/web-context>/' $JBOSS_HOME/standalone/configuration/standalone-ha.xml
+RUN sed -i -e 's/name="\/"/name="\/keycloak\/"/' $JBOSS_HOME/standalone/configuration/standalone.xml
+RUN sed -i -e 's/name="\/"/name="\/keycloak\/"/' $JBOSS_HOME/standalone/configuration/standalone-ha.xml
+RUN sed -i -e 's/\/auth/\/keycloak\/auth"/' $JBOSS_HOME/welcome-content/index.html
 
 EXPOSE 8080
 EXPOSE 8443

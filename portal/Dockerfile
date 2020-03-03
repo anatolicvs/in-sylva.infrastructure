@@ -40,11 +40,13 @@ RUN yarn build
 # production environment
 FROM nginx:latest
 
-RUN apt-get update && apt-get install wget -y
+RUN apt-get update && apt-get install wget && apt-get install telnet -y
 
 RUN apt-get install iputils-ping -y
 
 RUN apt-get update && apt-get install nginx-extras -y
+
+RUN apt-get install telnet
 
 ARG REACT_APP_IN_SYLVA_GATEKEEPER_HOST
 ARG REACT_APP_IN_SYLVA_GATEKEEPER_PORT
