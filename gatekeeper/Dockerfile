@@ -4,6 +4,8 @@ RUN apt-get update && \
     apt-get install -y  git \
     openssh-server
 
+RUN apt-get update && apt-get install wget && apt-get install telnet -y
+
 RUN mkdir /var/run/sshd
 EXPOSE 22 
 

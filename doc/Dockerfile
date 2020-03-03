@@ -26,7 +26,7 @@ RUN mkdir /app/
 
 WORKDIR /app/
 
-RUN git clone git@forgemia.inra.fr:magnus.anatolius/in-sylva.doc.git
+RUN git clone git@forgemia.inra.fr:in-sylva-development/in-sylva.doc.git
 
 RUN cd ./in-sylva.doc/website && yarn
 
