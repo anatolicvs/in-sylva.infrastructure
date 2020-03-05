@@ -41,4 +41,4 @@ EXPOSE 4000
 
 WORKDIR /app/in-sylva.gatekeeper/
 
-CMD [ "pm2-runtime", "npm run start:prod","--only","in-sylva.gatekeeper"]
+CMD [ "pm2-runtime","--name","in-sylva.gatekeeper", "npm run start:prod"]

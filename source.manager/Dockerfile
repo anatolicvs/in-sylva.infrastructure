@@ -4,6 +4,9 @@ RUN apt-get update && \
     apt-get install -y  git \
     openssh-server
 
+RUN apt-get update && apt-get install wget && apt-get install telnet -y
+RUN npm install --global pm2
+
 RUN mkdir /var/run/sshd
 EXPOSE 22 
 
@@ -38,4 +41,4 @@ EXPOSE 5000
 
 WORKDIR /app/in-sylva.source.manager/
 
-CMD ["npm", "run", "start:prod"]
+CMD [ "pm2-runtime","--name","in-sylva.source.manager", "npm run start:prod"]
