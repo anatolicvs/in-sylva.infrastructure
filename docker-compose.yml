@@ -193,7 +193,7 @@ services:
       KEYCLOAK_USERNAME: insylva_admin
       KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
       KEYCLOAK_GRANT_TYPE: password
-      KEYCLOAK_CLIENT_ID: client_id
+      KEYCLOAK_CLIENT_ID: admin-cli
     networks:
       - app-network
     links: 

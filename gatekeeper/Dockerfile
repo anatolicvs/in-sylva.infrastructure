@@ -5,6 +5,7 @@ RUN apt-get update && \
     openssh-server
 
 RUN apt-get update && apt-get install wget && apt-get install telnet -y
+RUN npm install --global pm2
 
 RUN mkdir /var/run/sshd
 EXPOSE 22 
@@ -40,4 +41,4 @@ EXPOSE 4000
 
 WORKDIR /app/in-sylva.gatekeeper/
 
-CMD ["npm", "run", "start:prod"]
+CMD [ "pm2-runtime", "npm run start:prod","--only","in-sylva.gatekeeper"]

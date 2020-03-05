@@ -7,6 +7,10 @@ RUN apt-get update && \
 RUN mkdir /var/run/sshd
 EXPOSE 22 
 
+RUN npm install --global pm2
+
+RUN apt-get update && apt-get install wget && apt-get install telnet -y
+
 ARG SSH_KEY
 ARG SSH_KEY_PASSPHRASE
 RUN chmod go-w /root
@@ -38,4 +42,4 @@ EXPOSE 8080
 
 WORKDIR /app/in-sylva.user.login/
 
-CMD ["npm", "run", "start"]
+CMD [ "pm2-runtime", "npm", "--", "start" ]
