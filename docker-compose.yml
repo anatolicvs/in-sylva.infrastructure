@@ -252,6 +252,30 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+  
+  login: 
+    image: in-sylva.user.login:latest
+    container_name: in-sylva.user.login
+    environment: 
+      network.host: 0.0.0.0
+      PM2_IN_SYLVA_GATEKEEPER_HOST: http://in-sylva.gatekeeper
+      IN_SYLVA_GATEKEEPER_PORT: 4000
+      IN_SYLVA_KEYCLOAK_HOST:  http://in-sylva.keycloak
+      IN_SYLVA_KEYCLOAK_PORT: 7000
+      IN_SYLVA_SEARCH_HOST: http://in-sylva.search
+      IN_SYLVA_SEARCH_PORT: 3001
+      IN_SYLVA_PORTAL_HOST: http://in-sylva.portal
+      IN_SYLVA_PORTAL_PORT: 3000
+    ports:
+     - 8080:8080
+    links:  
+      - gatekeeper
+      - keycloak
+      - search
+      - portal
+    networks:
+      - app-network
+    restart: unless-stopped
 
   search:
     image: in-sylva.search:latest
