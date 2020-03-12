@@ -40,13 +40,11 @@ RUN yarn build
 # production environment
 FROM nginx:latest
 
-RUN apt-get update && apt-get install wget && apt-get install telnet -y
+RUN apt-get update && apt-get install wget -y && apt-get install telnet -y
 
-RUN apt-get install iputils-ping -y
+# RUN apt-get install iputils-ping -y
 
 RUN apt-get update && apt-get install nginx-extras -y
-
-RUN apt-get install telnet
 
 ARG REACT_APP_IN_SYLVA_GATEKEEPER_HOST
 ARG REACT_APP_IN_SYLVA_GATEKEEPER_PORT
@@ -67,7 +65,7 @@ COPY --from=portal /app/in-sylva.portal/build /usr/share/nginx/html
 RUN rm /etc/nginx/conf.d/default.conf
 
 COPY nginx/nginx.conf /etc/nginx/conf.d
-# COPY nginx/gzip.conf /etc/nginx/conf.d
+COPY nginx/gzip.conf /etc/nginx/conf.d
 
 WORKDIR /usr/share/nginx/html
 COPY ./env.sh .
