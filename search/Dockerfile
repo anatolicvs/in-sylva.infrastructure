@@ -51,6 +51,10 @@ WORKDIR /usr/share/nginx/html
 COPY ./env.sh .
 COPY .env .
 
+# Run script which initializes env vars to fs
+RUN chmod +x env.sh
+RUN ./env.sh
+
 EXPOSE 3000
 
 CMD ["nginx", "-g", "daemon off;"]
