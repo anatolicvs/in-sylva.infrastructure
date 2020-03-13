@@ -63,6 +63,19 @@ CREATE table IF NOT EXISTS std_fields (
     update_at timestamp
 );
 
+CREATE table IF NOT EXISTS std_fields_values (
+    id serial UNIQUE NOT NULL, 
+    std_field_id int NOT NULL, 
+    values varchar(150),
+
+    CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
+        REFERENCES std_fields(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        
+    create_at timestamp NOT NULL DEFAULT NOW(),
+    update_at timestamp
+)
+
 CREATE table IF NOT EXISTS addtl_fields (
     id serial UNIQUE NOT NULL ,
     addtl_field_id integer,
@@ -70,7 +83,7 @@ CREATE table IF NOT EXISTS addtl_fields (
     category varchar(100), 
     field_name varchar(50),
     definition_and_comment varchar(150), 
-    Obligation_or_condition varchar(150), 
+    obligation_or_condition varchar(150), 
     field_type varchar(100),
     values varchar(150),
     isPublic BOOLEAN,
