@@ -1,3 +1,3 @@
 #!/bin/bash
 # Benjamin
-docker build --no-cache -t in-sylva.postgres .
+docker build --no-cache -t in-sylva.postgres ./postgresql/.

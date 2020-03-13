@@ -24,6 +24,6 @@ docker build --no-cache --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSP
  --build-arg IN_SYLVA_CLIENT_ID="in-sylva.user.app" \
  --build-arg IN_SYLVA_GRANT_TYPE="password" \
  --build-arg IN_SYLVA_REALM="in-sylva" \
- --tag in-sylva.user.login .
+ --tag in-sylva.user.login ./login/.
 
 
