@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS sources (
 );
 
 CREATE table IF NOT EXISTS provider_sources (
-    id serial PRIMARY KEY ,
+    id serial PRIMARY KEY,
     user_id integer NOT NULL,
     source_id integer,
 
@@ -40,8 +40,8 @@ CREATE table IF NOT EXISTS provider_sources (
     update_at timestamp
 );
 
-CREATE table IF NOT EXISTS std_fields (
-    id serial UNIQUE NOT NULL ,
+CREATE table IF NOT EXISTS std_fields(
+    id serial UNIQUE NOT NULL,
     std_field_id integer,
     
     category varchar(100), 
@@ -63,20 +63,20 @@ CREATE table IF NOT EXISTS std_fields (
     update_at timestamp
 );
 
-CREATE table IF NOT EXISTS std_fields_values (
+CREATE table IF NOT EXISTS std_fields_values(
     id serial UNIQUE NOT NULL, 
     std_field_id int NOT NULL, 
     values varchar(150),
 
-    CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
+    CONSTRAINT std_fields_values_fkkey FOREIGN KEY (std_field_id)
         REFERENCES std_fields(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
         
     create_at timestamp NOT NULL DEFAULT NOW(),
     update_at timestamp
-)
+);
 
-CREATE table IF NOT EXISTS addtl_fields (
+CREATE table IF NOT EXISTS addtl_fields(
     id serial UNIQUE NOT NULL ,
     addtl_field_id integer,
 

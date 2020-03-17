@@ -1,9 +1,4 @@
 #!/bin/bash
-# sh ./build.sh id_rsa_insylva_docker
-if [$1 -eq ""]
-then
-    set "id_rsa_insylva_docker"
-fi
 
 while [ "$1" != "" ]; do
    SSH_KEY=$(cat ~/.ssh/$1)
@@ -13,4 +8,3 @@ while [ "$1" != "" ]; do
 done
 
 docker build --no-cache --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSPHRASE="$SSH_KEY_PASSPHRASE" --tag in-sylva.doc ./doc/.
-

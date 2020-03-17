@@ -1,11 +1,6 @@
 #!/bin/bash
 
-if [$1 -eq ""]
-then
-    set "id_rsa_insylva_docker"
-fi
-
- while [ "$1" != "" ]; do
+while [ "$1" != "" ]; do
    SSH_KEY=$(cat ~/.ssh/$1)
    SSH_KEY_PASSPHRASE=$(cat ~/.ssh/$1.pub)
     # Shift all the parameters down by one
