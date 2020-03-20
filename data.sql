@@ -1,5 +1,4 @@
 \connect insylva
-
 CREATE TABLE IF NOT EXISTS users (
     id serial UNIQUE PRIMARY KEY,
     kc_id varchar(100) UNIQUE NOT NULL,
@@ -43,35 +42,36 @@ CREATE table IF NOT EXISTS provider_sources (
 CREATE table IF NOT EXISTS std_fields(
     id serial UNIQUE NOT NULL,
     std_field_id integer,
-    
-    category varchar(100), 
+
+    category varchar(100),
     field_name varchar(50),
-    definition_and_comment varchar(150), 
-    Obligation_or_condition varchar(150), 
+    definition_and_comment varchar(150),
+    obligation_or_condition varchar(150),
+    cardinality varchar(200),
     field_type varchar(100),
-    values varchar(150),
+    values text,
 
     isPublic BOOLEAN,
-    isOptional BOOLEAN, 
-    PRIMARY KEY (id), 
+    isOptional BOOLEAN,
+    PRIMARY KEY (id),
 
-    CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id) 
+    CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
         REFERENCES std_fields(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
-        
+
     create_at timestamp NOT NULL DEFAULT NOW(),
     update_at timestamp
 );
 
 CREATE table IF NOT EXISTS std_fields_values(
-    id serial UNIQUE NOT NULL, 
-    std_field_id int NOT NULL, 
+    id serial UNIQUE NOT NULL,
+    std_field_id int NOT NULL,
     values varchar(150),
 
     CONSTRAINT std_fields_values_fkkey FOREIGN KEY (std_field_id)
         REFERENCES std_fields(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
-        
+
     create_at timestamp NOT NULL DEFAULT NOW(),
     update_at timestamp
 );
@@ -80,17 +80,18 @@ CREATE table IF NOT EXISTS addtl_fields(
     id serial UNIQUE NOT NULL ,
     addtl_field_id integer,
 
-    category varchar(100), 
+    category varchar(100),
     field_name varchar(50),
-    definition_and_comment varchar(150), 
-    obligation_or_condition varchar(150), 
+    definition_and_comment varchar(150),
+    obligation_or_condition varchar(150),
     field_type varchar(100),
-    values varchar(150),
+    values text,
+    cardinality varchar(200),
     isPublic BOOLEAN,
-    isOptional BOOLEAN, 
+    isOptional BOOLEAN,
     PRIMARY KEY (id),
 
-    CONSTRAINT addtl_fields_id_fkkey FOREIGN KEY (addtl_field_id) 
+    CONSTRAINT addtl_fields_id_fkkey FOREIGN KEY (addtl_field_id)
         REFERENCES addtl_fields(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
@@ -101,7 +102,7 @@ CREATE table IF NOT EXISTS addtl_fields(
 CREATE table IF NOT EXISTS addtl_fields_sources(
     id serial PRIMARY KEY ,
     addtl_field_id integer,
-    source_id integer, 
+    source_id integer,
 
     CONSTRAINT addtl_fields_sources_addtl_field_id_fkey FOREIGN KEY (addtl_field_id)
         REFERENCES addtl_fields(id) MATCH SIMPLE
@@ -109,7 +110,7 @@ CREATE table IF NOT EXISTS addtl_fields_sources(
 
     CONSTRAINT addtl_fields_sources_source_id_fkey FOREIGN KEY (source_id)
         REFERENCES sources(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,    
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     create_at timestamp NOT NULL DEFAULT NOW(),
     update_at timestamp
@@ -213,7 +214,6 @@ CREATE table  IF NOT EXISTS user_search_his(
     create_at timestamp NOT NULL DEFAULT NOW(),
     update_at timestamp
 );
-
 /*
 CREATE OR REPLACE FUNCTION func_role_updater() RETURNS TRIGGER AS $BODY$
     BEGIN
