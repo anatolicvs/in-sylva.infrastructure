@@ -221,8 +221,8 @@ services:
 
       DB_HOST: in-sylva.postgres 
       DB_USER: insylva_admin_pg 
-      DB_PASSWORD=: 2kGBDUaGjXK2VuPyf5R64VS 
-      DB_DATABASE: insylva
+      DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS 
+      DB_DATABASE: insylva 
       DB_PORT: 5432 
 
       PORT: 5000
