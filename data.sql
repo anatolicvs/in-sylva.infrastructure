@@ -35,20 +35,6 @@ CREATE TABLE IF NOT EXISTS user_profile (
     update_at timestamp
 ); 
 
-CREATE TABLE IF NOT EXISTS profile_specifications(
-    profil_id int, 
-    field_specification_id int, 
-
-    CONSTRAINT profile_specifications_profil_id FOREIGN KEY (profil_id)
-        REFERENCES user_profile(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    CONSTRAINT field_specifications_field_specification_id FOREIGN KEY (field_specification_id)
-        REFERENCES field_specifications(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
-); 
-
 CREATE TABLE IF NOT EXISTS field_specifications (
     id serial PRIMARY KEY,
     std_field_id int,
@@ -67,6 +53,20 @@ CREATE TABLE IF NOT EXISTS field_specifications (
     create_at timestamp NOT NULL DEFAULT NOW(),
     update_at timestamp
 );
+
+CREATE TABLE IF NOT EXISTS profile_specifications(
+    profil_id int, 
+    field_specification_id int, 
+
+    CONSTRAINT profile_specifications_profil_id FOREIGN KEY (profil_id)
+        REFERENCES user_profile(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT field_specifications_field_specification_id FOREIGN KEY (field_specification_id)
+        REFERENCES field_specifications(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    create_at timestamp NOT NULL DEFAULT NOW(),
+    update_at timestamp
+); 
 
 CREATE table IF NOT EXISTS provider_sources (
     id serial PRIMARY KEY,
