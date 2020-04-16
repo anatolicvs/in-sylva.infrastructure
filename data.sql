@@ -23,6 +23,9 @@ CREATE TABLE IF NOT EXISTS sources (
     update_at timestamp
 );
 
+create unique index sources_name_uindex
+    on sources (name);
+
 CREATE TABLE IF NOT EXISTS user_profile (
     id serial PRIMARY KEY, 
     profil_name varchar(100), 
