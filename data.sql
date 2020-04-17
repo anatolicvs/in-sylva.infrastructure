@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS sources (
     id serial PRIMARY KEY,
-    index_id varchar(50) NOT NULL,
+    index_id varchar(50),
     mng_id varchar(50) NOT NULL,
     name varchar(50) NOT NULL ,
     description text,
@@ -22,54 +22,6 @@ CREATE TABLE IF NOT EXISTS sources (
     create_at timestamp NOT NULL DEFAULT NOW(),
     update_at timestamp
 );
-
-create unique index sources_name_uindex
-    on sources (name);
-
-CREATE TABLE IF NOT EXISTS user_profile (
-    id serial PRIMARY KEY, 
-    profil_name varchar(100), 
-    kc_id varchar(100),
-
-    CONSTRAINT user_profile_kc_id FOREIGN KEY (kc_id)
-        REFERENCES users(kc_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
-); 
-
-CREATE TABLE IF NOT EXISTS field_specifications (
-    id serial PRIMARY KEY,
-    std_field_id int,
-    addtl_field_id int,
-    kc_id varchar(100),
-
-    CONSTRAINT field_specifications_std_field_id FOREIGN KEY (std_field_id)
-        REFERENCES std_fields(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    CONSTRAINT field_specifications_addtl_field_id FOREIGN KEY (addtl_field_id)
-        REFERENCES addtl_fields(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    CONSTRAINT field_specifications_kc_id FOREIGN KEY (kc_id)
-        REFERENCES users(kc_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
-);
-
-CREATE TABLE IF NOT EXISTS profile_specifications(
-    profil_id int, 
-    field_specification_id int, 
-
-    CONSTRAINT profile_specifications_profil_id FOREIGN KEY (profil_id)
-        REFERENCES user_profile(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    CONSTRAINT field_specifications_field_specification_id FOREIGN KEY (field_specification_id)
-        REFERENCES field_specifications(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
-); 
 
 CREATE table IF NOT EXISTS provider_sources (
     id serial PRIMARY KEY,
@@ -263,6 +215,56 @@ CREATE table  IF NOT EXISTS user_search_his(
     create_at timestamp NOT NULL DEFAULT NOW(),
     update_at timestamp
 );
+
+create unique index sources_name_uindex
+    on sources (name);
+
+CREATE TABLE IF NOT EXISTS user_profile (
+    id serial PRIMARY KEY, 
+    profil_name varchar(100), 
+    kc_id varchar(100),
+
+    CONSTRAINT user_profile_kc_id FOREIGN KEY (kc_id)
+        REFERENCES users(kc_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    create_at timestamp NOT NULL DEFAULT NOW(),
+    update_at timestamp
+); 
+
+CREATE TABLE IF NOT EXISTS field_specifications (
+    id serial PRIMARY KEY,
+    std_field_id int,
+    addtl_field_id int,
+    kc_id varchar(100),
+
+    CONSTRAINT field_specifications_std_field_id FOREIGN KEY (std_field_id)
+        REFERENCES std_fields(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT field_specifications_addtl_field_id FOREIGN KEY (addtl_field_id)
+        REFERENCES addtl_fields(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT field_specifications_kc_id FOREIGN KEY (kc_id)
+        REFERENCES users(kc_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    create_at timestamp NOT NULL DEFAULT NOW(),
+    update_at timestamp
+);
+
+CREATE TABLE IF NOT EXISTS profile_specifications(
+    profil_id int, 
+    field_specification_id int, 
+
+    CONSTRAINT profile_specifications_profil_id FOREIGN KEY (profil_id)
+        REFERENCES user_profile(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT field_specifications_field_specification_id FOREIGN KEY (field_specification_id)
+        REFERENCES field_specifications(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    create_at timestamp NOT NULL DEFAULT NOW(),
+    update_at timestamp
+); 
+
+
 /*
 CREATE OR REPLACE FUNCTION func_role_updater() RETURNS TRIGGER AS $BODY$
     BEGIN

@@ -230,6 +230,10 @@ services:
       ELK_USERNAME: admin
       ELK_PASSWORD: InSylva146544
 
+      KEYCLOAK_REALM: "in-sylva"
+      SERVER_URL: http://keycloak:8080/keycloak/auth
+      CLIENT_ID: "in-sylva.user.app"
+
       PORT: 5000
     ports:
       - 5000:5000
@@ -237,6 +241,7 @@ services:
       - mongo
       - postgres
       - odfe-node1
+      - keycloak
     networks:
       - app-network
     restart: unless-stopped
