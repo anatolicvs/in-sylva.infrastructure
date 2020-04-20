@@ -198,3 +198,13 @@ For more complete information on a certificate:
 ### NOSPC: no space left on device' while running the nodeJS in docker
 
 `sudo docker system prune -af`
+
+
+# Using the Admin CLI of Keycloak
+
+```sh
+$ $JBOSS_HOME/bin/kcadm.sh config credentials --server http://localhost:8080/keycloak/auth --realm master --user insylva_admin --password v2kGBDUaGjXK2VuPyf5R64VS
+$ kcadm.sh create realms -s realm=in-sylva-2 -s enabled=true -o
+$ CID=$(kcadm.sh create clients -r in-sylva-2 -s clientId=my_client -s 'redirectUris=["*"]' -i)
+$ kcadm.sh get clients/$CID/installation/providers/keycloak-oidc-keycloak-json
+```

@@ -30,6 +30,7 @@ services:
       DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
       KEYCLOAK_USER: insylva_admin
       KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      KEYCLOAK_IMPORT: /home/realms/realm-export.json
       # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
       #JDBC_PARAMS: "ssl=true"
     ports:
@@ -41,7 +42,7 @@ services:
     restart: unless-stopped
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
     deploy:
       resources:
         limits:

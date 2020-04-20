@@ -13,14 +13,27 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS sources (
     id serial PRIMARY KEY,
-    index_id varchar(50),
-    mng_id varchar(50) NOT NULL,
     name varchar(50) NOT NULL ,
     description text,
-    
-    is_send boolean  default false,
+
     create_at timestamp NOT NULL DEFAULT NOW(),
     update_at timestamp
+);
+
+CREATE TABLE IF NOT EXISTS sources_indices(
+   id serial PRIMARY KEY, 
+   source_id integer,
+
+   index_id varchar(50),
+   mng_id varchar(50) NOT NULL,
+   is_send boolean  default false, 
+
+   CONSTRAINT sources_indices_source_id_fkey FOREIGN KEY (source_id)
+        REFERENCES sources(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION, 
+   
+   create_at timestamp NOT NULL DEFAULT NOW(),
+   update_at timestamp
 );
 
 CREATE table IF NOT EXISTS provider_sources (
