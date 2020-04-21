@@ -195,6 +195,10 @@ services:
       KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
       KEYCLOAK_GRANT_TYPE: password
       KEYCLOAK_CLIENT_ID: admin-cli
+
+      KEYCLOAK_REALM: in-sylva
+      KEYCLOAK_SERVER_URL: http://keycloak:8080/keycloak/auth
+      
     networks:
       - app-network
     links: 
