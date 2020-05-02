@@ -3,6 +3,7 @@
 
 # echo -n "Enter the name of public key (ex:id_ed25519): "
 # read publickey
+nmcli dev show | grep 'IP4.DNS'
 
 if [$1 -eq ""]
 then
@@ -49,6 +50,16 @@ case $imageName in
        wait
        echo -e $"source.manager image Successfully built\n"
        ;;
+    "search")
+       sh ./search/build.sh $1
+       wait
+       echo -e $"search image Successfully built\n"
+       ;;
+    "search-api")
+       sh ./search.api/build.sh $1
+       wait
+       echo -e $"search.api image Successfully built\n"
+       ;;
     "doc")
       sh ./doc/build.sh $1
       wait
@@ -73,6 +84,12 @@ case $imageName in
       sh ./source.manager/build.sh $1
       wait
       echo -e $"source.manager image Successfully built\n"
+      sh ./search/build.sh $1
+      wait
+      echo -e $"search image Successfully built\n"
+      sh ./search.api/build.sh $1
+      wait
+      echo -e $"search.api image Successfully built\n"
       sh ./doc/build.sh $1
       wait
       echo $"doc image Successfully built\n"

@@ -87,7 +87,7 @@ services:
     restart: unless-stopped
 
   odfe-node1:
-    image: amazon/opendistro-for-elasticsearch:1.3.0
+    image: amazon/opendistro-for-elasticsearch:latest
     container_name: odfe-node1
     environment:
       - cluster.name=odfe-cluster
@@ -125,7 +125,7 @@ services:
     restart: unless-stopped
 
   odfe-node2:
-    image: amazon/opendistro-for-elasticsearch:1.3.0
+    image: amazon/opendistro-for-elasticsearch:latest
     container_name: odfe-node2
     environment:
       - cluster.name=odfe-cluster
@@ -135,6 +135,7 @@ services:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - network.host=0.0.0.0
+      # - discovery.zen.ping.unicast.hosts=odfe-node1
     ulimits:
       memlock:
         soft: -1
@@ -160,17 +161,51 @@ services:
     restart: unless-stopped
 
   kibana:
-    image: amazon/opendistro-for-elasticsearch-kibana:1.3.0
+    image: amazon/opendistro-for-elasticsearch-kibana:latest
     container_name: odfe-kibana
-    environment:
-      - network.host=0.0.0.0
     ports:
       - 5601:5601
     volumes:
       - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     environment:
+      SERVER_HOST: 0.0.0.0
       ELASTICSEARCH_URL: http://odfe-node1:9200
       ELASTICSEARCH_HOSTS: http://odfe-node1:9200
+    links: 
+      - odfe-node1
+      - odfe-node2
+    networks:
+      - app-network
+    restart: unless-stopped
+  
+  search-api: 
+    image: in-sylva.search.api:latest
+    container_name: in-sylva.search.api
+    ports: 
+      - 9000:9000
+    environment: 
+      PORT: 9000
+      network.host: 0.0.0.0
+      NODE_ENV: production
+
+      DB_HOST: in-sylva.postgres 
+      DB_USERNAME: insylva_admin_pg 
+      DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS 
+      DB_DATABASE: insylva
+      DB_PORT: 5432 
+
+      ELK_HOST: odfe-node1
+      ELK_PORT: 9200
+      ELK_USERNAME: admin 
+      ELK_PASSWORD: InSylva146544
+
+      KEYCLOAK_REALM: in-sylva
+      KEYCLOAK_SERVER_URL: http://localhost:7000/keycloak/auth
+      KEYCLOAK_CLIENT_ID: in-sylva.user.app
+    links: 
+      - postgres
+      - odfe-node1
+      - keycloak
     networks:
       - app-network
     restart: unless-stopped
@@ -235,9 +270,9 @@ services:
       ELK_USERNAME: admin
       ELK_PASSWORD: InSylva146544
 
-      KEYCLOAK_REALM: "in-sylva"
+      KEYCLOAK_REALM: in-sylva
       SERVER_URL: http://keycloak:8080/keycloak/auth
-      CLIENT_ID: "in-sylva.user.app"
+      CLIENT_ID: in-sylva.user.app
 
       PORT: 5000
     ports:

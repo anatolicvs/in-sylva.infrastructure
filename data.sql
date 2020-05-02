@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS users (
     surname varchar(50),
     email varchar(50) UNIQUE NOT NULL,
     password varchar(50) NOT NULL,
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 CREATE TABLE IF NOT EXISTS sources (
@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS sources (
     name varchar(50) NOT NULL ,
     description text,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 CREATE TABLE IF NOT EXISTS sources_indices(
@@ -32,8 +32,8 @@ CREATE TABLE IF NOT EXISTS sources_indices(
         REFERENCES sources(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION, 
    
-   create_at timestamp NOT NULL DEFAULT NOW(),
-   update_at timestamp
+   createdAt timestamp NOT NULL DEFAULT NOW(),
+   updatedAt timestamp
 );
 
 CREATE table IF NOT EXISTS provider_sources (
@@ -49,8 +49,8 @@ CREATE table IF NOT EXISTS provider_sources (
         REFERENCES users(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 CREATE table IF NOT EXISTS std_fields(
@@ -73,8 +73,8 @@ CREATE table IF NOT EXISTS std_fields(
         REFERENCES std_fields(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 CREATE table IF NOT EXISTS std_fields_values(
@@ -86,8 +86,8 @@ CREATE table IF NOT EXISTS std_fields_values(
         REFERENCES std_fields(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 CREATE table IF NOT EXISTS addtl_fields(
@@ -109,8 +109,8 @@ CREATE table IF NOT EXISTS addtl_fields(
         REFERENCES addtl_fields(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 CREATE table IF NOT EXISTS addtl_fields_sources(
@@ -126,8 +126,8 @@ CREATE table IF NOT EXISTS addtl_fields_sources(
         REFERENCES sources(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 
@@ -135,15 +135,15 @@ CREATE table IF NOT EXISTS roles(
     id serial primary key,
     name varchar(50),
     description text,
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 CREATE table  IF NOT EXISTS realm(
       id serial primary key,
       name varchar(50),
-      create_at timestamp NOT NULL DEFAULT NOW(),
-      update_at timestamp
+      createdAt timestamp NOT NULL DEFAULT NOW(),
+      updatedAt timestamp
 );
 
 CREATE table  IF NOT EXISTS realm_user(
@@ -159,8 +159,8 @@ CREATE table  IF NOT EXISTS realm_user(
         REFERENCES  users(kc_id) MATCH SIMPLE
         ON UPDATE NO ACTION  ON DELETE  NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 CREATE table IF NOT EXISTS roles_std_fields(
@@ -176,8 +176,8 @@ CREATE table IF NOT EXISTS roles_std_fields(
         REFERENCES std_fields(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 CREATE table IF NOT EXISTS roles_addtl_fields(
@@ -193,8 +193,8 @@ CREATE table IF NOT EXISTS roles_addtl_fields(
         REFERENCES addtl_fields(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 
@@ -212,8 +212,8 @@ CREATE table IF NOT EXISTS roles_users (
         REFERENCES  users(kc_id) MATCH SIMPLE
         ON UPDATE NO ACTION  ON DELETE  NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 CREATE table  IF NOT EXISTS user_search_his(
@@ -225,8 +225,8 @@ CREATE table  IF NOT EXISTS user_search_his(
     query text,
     name varchar(50),
     description text,
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 create unique index sources_name_uindex
@@ -240,8 +240,8 @@ CREATE TABLE IF NOT EXISTS user_profile (
     CONSTRAINT user_profile_kc_id FOREIGN KEY (kc_id)
         REFERENCES users(kc_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 ); 
 
 CREATE TABLE IF NOT EXISTS field_specifications (
@@ -259,8 +259,8 @@ CREATE TABLE IF NOT EXISTS field_specifications (
     CONSTRAINT field_specifications_kc_id FOREIGN KEY (kc_id)
         REFERENCES users(kc_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 );
 
 CREATE TABLE IF NOT EXISTS profile_specifications(
@@ -273,15 +273,15 @@ CREATE TABLE IF NOT EXISTS profile_specifications(
     CONSTRAINT field_specifications_field_specification_id FOREIGN KEY (field_specification_id)
         REFERENCES field_specifications(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
 
-    create_at timestamp NOT NULL DEFAULT NOW(),
-    update_at timestamp
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 ); 
 
 
 /*
 CREATE OR REPLACE FUNCTION func_role_updater() RETURNS TRIGGER AS $BODY$
     BEGIN
-        UPDATE roles SET update_at = current_timestamp WHERE id = OLD.id;
+        UPDATE roles SET updatedAt = current_timestamp WHERE id = OLD.id;
         RETURN NEW;
     END;
 $BODY$
@@ -300,7 +300,7 @@ DROP TRIGGER IF EXISTS tr_role_updater ON roles;
 
 CREATE OR REPLACE FUNCTION func_resource_updater() RETURNS TRIGGER AS $BODY$
     BEGIN
-        UPDATE sources SET update_at = current_timestamp WHERE id = NEW.id;
+        UPDATE sources SET updatedAt = current_timestamp WHERE id = NEW.id;
         RETURN  NEW;
     END;
 $BODY$
@@ -314,7 +314,7 @@ CREATE TRIGGER tr_resource_updater AFTER UPDATE ON sources
 
 CREATE OR REPLACE FUNCTION func_user_updater() RETURNS TRIGGER AS $BODY$
     BEGIN
-        UPDATE users SET update_at = current_timestamp WHERE id = NEW.id;
+        UPDATE users SET updatedAt = current_timestamp WHERE id = NEW.id;
         RETURN  NEW;
     END;
 $BODY$
@@ -325,26 +325,3 @@ CREATE TRIGGER tr_user_updater AFTER UPDATE ON users
      FOR EACH ROW
   EXECUTE PROCEDURE func_user_updater();
 */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

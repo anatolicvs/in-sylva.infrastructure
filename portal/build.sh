@@ -7,5 +7,5 @@ while [ "$1" != "" ]; do
     shift
 done
 
-docker build --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSPHRASE="$SSH_KEY_PASSPHRASE"  --tag in-sylva.portal ./portal/.
+docker build --network=host --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSPHRASE="$SSH_KEY_PASSPHRASE"  --tag in-sylva.portal ./portal/.
 # docker build --no-cache --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSPHRASE="$SSH_KEY_PASSPHRASE"  --tag in-sylva.portal .
