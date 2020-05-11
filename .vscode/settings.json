@@ -9,5 +9,6 @@
     ],
     "maven.view": "flat",
     "java.dependency.packagePresentation": "hierarchical",
-    "java.dependency.syncWithFolderExplorer": false
+    "java.dependency.syncWithFolderExplorer": false,
+    "cmake.configureOnOpen": false
 }

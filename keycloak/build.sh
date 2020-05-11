@@ -1,4 +1,4 @@
 #!/bin/bash
 
-docker build --network=host --tag in-sylva.keycloak ./keycloak/.
+docker build --no-cache --network=host --tag in-sylva.keycloak ./keycloak/.
 

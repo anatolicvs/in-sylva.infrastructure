@@ -1,12 +1,13 @@
 FROM centos:latest
 
-ENV KEYCLOAK_VERSION 9.0.3
+ENV KEYCLOAK_VERSION 10.0.1
 ENV JDBC_POSTGRES_VERSION 42.2.5
-ENV JDBC_MYSQL_VERSION 5.1.46
-ENV JDBC_MARIADB_VERSION 2.2.3
+ENV JDBC_MYSQL_VERSION 8.0.19
+ENV JDBC_MARIADB_VERSION 2.5.4
 ENV JDBC_MSSQL_VERSION 7.4.1.jre11
+
 ENV LAUNCH_JBOSS_IN_BACKGROUND 1
-ENV PROXY_ADDRESS_FORWARDING true
+ENV PROXY_ADDRESS_FORWARDING false
 ENV JBOSS_HOME /opt/jboss/keycloak
 ENV LANG en_US.UTF-8
 
@@ -18,13 +19,13 @@ USER root
 
 RUN yum update -y && yum install -y gzip hostname java-11-openjdk-headless openssl tar which && yum clean all
 
-
-RUN mkdir /home/realms
-COPY realm-export.json /home/realms
+# RUN systemctl disable firewalld
 
 ADD tools /opt/jboss/tools
 RUN /opt/jboss/tools/build-keycloak.sh
 
+RUN mkdir /home/realms
+COPY realm-export.json /home/realms
 
 RUN sed -i -e 's/<web-context>auth<\/web-context>/<web-context>keycloak\/auth<\/web-context>/' $JBOSS_HOME/standalone/configuration/standalone.xml
 RUN sed -i -e 's/<web-context>auth<\/web-context>/<web-context>keycloak\/auth<\/web-context>/' $JBOSS_HOME/standalone/configuration/standalone-ha.xml

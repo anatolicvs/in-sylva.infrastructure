@@ -1,4 +1,4 @@
-# opendistro_security.disabled: false
+opendistro_security.disabled: false
 opendistro_security.ssl.transport.pemcert_filepath: node.pem
 opendistro_security.ssl.transport.pemkey_filepath: node-key.pem
 opendistro_security.ssl.transport.pemtrustedcas_filepath: root-ca.pem

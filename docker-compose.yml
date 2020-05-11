@@ -8,37 +8,45 @@ services:
       - ./data.sql:/docker-entrypoint-initdb.d/data.sql
       - ./postgres-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_MULTIPLE_DATABASES: insylva, keycloak
+      POSTGRES_MULTIPLE_DATABASES: insylva,keycloak
       POSTGRES_USER: insylva_admin_pg
       POSTGRES_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      POSTGRES_HOST: postgres
     ports:
-      - "5432:5432"
+      - 5432:5432
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
   
   keycloak:
     image: in-sylva.keycloak:latest
     container_name: in-sylva.keycloak
     environment:
-      network.host: 0.0.0.0 
+      network.host: 0.0.0.0
+
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
+      DB_PORT: 5432
       DB_DATABASE: keycloak
+
       DB_USER: insylva_admin_pg
       DB_SCHEMA: public
       DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+
       KEYCLOAK_USER: insylva_admin
       KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
-      KEYCLOAK_IMPORT: /home/realms/realm-export.json
+      
+      # KEYCLOAK_IMPORT: /home/realms/realm-export.json
       # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-      #JDBC_PARAMS: "ssl=true"
+      JDBC_PARAMS: useSSL=false
+      # JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
+      # JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS,info_writer_sleep_time=500,initialize_sql="CREATE TABLE IF NOT EXISTS JGROUPSPING ( own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, created timestamp default current_timestamp, ping_data BYTEA, constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name))"
     ports:
       - 7000:8080
     depends_on:
       - postgres
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
 
   pgadmin:
@@ -56,7 +64,7 @@ services:
     ports:
       - "${PGADMIN_PORT:-5050}:80"
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
 
   mongo:
@@ -71,19 +79,18 @@ services:
     volumes:
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
 
   mongo-express:
     image: mongo-express
-    restart: always
     ports:
       - 8881:8081
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: in_sylva_mongoc
       ME_CONFIG_MONGODB_ADMINPASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
 
   odfe-node1:
@@ -121,7 +128,7 @@ services:
       - 9200:9200
       - 9600:9600 # required for Performance Analyzer
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
 
   odfe-node2:
@@ -157,7 +164,7 @@ services:
       - ./roles.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles.yml
       - ./action_groups.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/action_groups.yml
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
 
   kibana:
@@ -175,16 +182,16 @@ services:
       - odfe-node1
       - odfe-node2
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
   
   search-api: 
     image: in-sylva.search.api:latest
     container_name: in-sylva.search.api
     ports: 
-      - 9000:9000
+      - 9001:9001
     environment: 
-      PORT: 9000
+      PORT: 9001
       network.host: 0.0.0.0
       NODE_ENV: production
 
@@ -207,7 +214,7 @@ services:
       - odfe-node1
       - keycloak
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
 
   gatekeeper:
@@ -235,7 +242,7 @@ services:
       KEYCLOAK_SERVER_URL: http://keycloak:8080/keycloak/auth
       
     networks:
-      - app-network
+      - insylva-net
     links: 
       - keycloak
     restart: unless-stopped
@@ -283,7 +290,7 @@ services:
       - odfe-node1
       - keycloak
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
 
   portal:
@@ -291,12 +298,12 @@ services:
     container_name: in-sylva.portal
     environment:
       network.host: 0.0.0.0
-      REACT_APP_IN_SYLVA_GATEKEEPER_HOST: http://in-sylva.gatekeeper 
-      REACT_APP_IN_SYLVA_GATEKEEPER_PORT: 4000 
-      REACT_APP_IN_SYLVA_SOURCE_MANAGER_HOST: http://in-sylva.source.manager
-      REACT_APP_IN_SYLVA_SOURCE_MANAGER_PORT: 5000
-      REACT_APP_IN_SYLVA_KEYCLOAK_HOST: http://in-sylva.keycloak
-      REACT_APP_IN_SYLVA_KEYCLOAK_PORT: 7000
+      REACT_insylva_IN_SYLVA_GATEKEEPER_HOST: http://in-sylva.gatekeeper 
+      REACT_insylva_IN_SYLVA_GATEKEEPER_PORT: 4000 
+      REACT_insylva_IN_SYLVA_SOURCE_MANAGER_HOST: http://in-sylva.source.manager
+      REACT_insylva_IN_SYLVA_SOURCE_MANAGER_PORT: 5000
+      REACT_insylva_IN_SYLVA_KEYCLOAK_HOST: http://in-sylva.keycloak
+      REACT_insylva_IN_SYLVA_KEYCLOAK_PORT: 7000
     ports:
       - 3000:3000
     links: 
@@ -304,7 +311,7 @@ services:
       - keycloak
       - source-manager
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
   
   login:
@@ -331,7 +338,7 @@ services:
       - search
       - portal
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
 
   search:
@@ -339,16 +346,16 @@ services:
     container_name: in-sylva.search
     environment: 
       network.host: 0.0.0.0
-      REACT_APP_IN_SYLVA_GATEKEEPER_HOST: http://in-sylva.gatekeeper 
-      REACT_APP_IN_SYLVA_GATEKEEPER_PORT: 4000 
-      REACT_APP_IN_SYLVA_SOURCE_MANAGER_HOST: http://in-sylva.source.manager
-      REACT_APP_IN_SYLVA_SOURCE_MANAGER_PORT: 5000
-      REACT_APP_IN_SYLVA_KEYCLOAK_HOST: http://in-sylva.keycloak
-      REACT_APP_IN_SYLVA_KEYCLOAK_PORT: 7000
+      REACT_insylva_IN_SYLVA_GATEKEEPER_HOST: http://in-sylva.gatekeeper 
+      REACT_insylva_IN_SYLVA_GATEKEEPER_PORT: 4000 
+      REACT_insylva_IN_SYLVA_SOURCE_MANAGER_HOST: http://in-sylva.source.manager
+      REACT_insylva_IN_SYLVA_SOURCE_MANAGER_PORT: 5000
+      REACT_insylva_IN_SYLVA_KEYCLOAK_HOST: http://in-sylva.keycloak
+      REACT_insylva_IN_SYLVA_KEYCLOAK_PORT: 7000
     ports:
       - 3001:3000
     networks:
-      - app-network
+      - insylva-net
     restart: unless-stopped
 
   portainer:
@@ -385,5 +392,5 @@ volumes:
   portainer_data:
 
 networks:
-  app-network:
+  insylva-net:
     driver: bridge
