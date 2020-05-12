@@ -8,12 +8,21 @@ nmcli dev show | grep 'IP4.DNS'
 if [ "$1" == "" ]
 then
      set $"id_ed25519"
+     echo "Setting ssh key to default: $1"
+fi
+
+if [ ! -e ~/.ssh/$1.pub ]; then
+  echo "ERROR: the $1 key file does not exit. Check and relaunch ..."
+  exit
+else
+  echo "Key file: $1"
 fi
 
 echo $publickey
-echo "IN-SYLVA Docker images list: gatekeeper, keycloak, login, portal, postgresql, sourceman, search, search-api, doc"
+echo "IN-SYLVA project 'Docker images' list: "
+echo "        --> gatekeeper, keycloak, login, portal, postgresql, sourceman, search, search-api, doc"
 echo ""
-echo -n "Enter the name of docker image you want to build locally: (ex:gatekeeper or || all [empty answer means all] ): "
+echo -n "Enter the name of docker image you want to build locally: (ex:gatekeeper or || all): "
 
 read imageName
 
