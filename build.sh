@@ -5,16 +5,19 @@
 # read publickey
 nmcli dev show | grep 'IP4.DNS'
 
-if [$1 -eq ""]
+if [ "$1" == "" ]
 then
      set $"id_ed25519"
 fi
 
 echo $publickey
-echo -n "Enter the name of docker image name which is wanted to build locally: (ex:gatekeeper or || all): "
+echo "IN-SYLVA Docker images list: gatekeeper, keycloak, login, portal, postgresql, sourceman, search, search-api, doc"
+echo ""
+echo -n "Enter the name of docker image you want to build locally: (ex:gatekeeper or || all [empty answer means all] ): "
+
 read imageName
 
-if [$imageName -eq ""]
+if [ "$imageName" == "" ]
 then
     set $"all"
 fi
@@ -65,7 +68,7 @@ case $imageName in
       wait
       echo $"doc image Successfully built\n"
       ;;
-    *)
+    "all")
       sh ./gatekeeper/build.sh $1
       wait 
       echo -e $"gatekeeper image Successfully built\n"
@@ -93,6 +96,9 @@ case $imageName in
       sh ./doc/build.sh $1
       wait
       echo $"doc image Successfully built\n"
+      ;;
+    *)
+      echo "Option not allowed. Restart the build script and read carefully !"
       ;;
 esac
 shift
