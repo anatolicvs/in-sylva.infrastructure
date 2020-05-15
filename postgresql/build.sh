@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t in-sylva.postgres ./postgresql/.
+docker build --network=bridge -t in-sylva.postgres ./postgresql/.

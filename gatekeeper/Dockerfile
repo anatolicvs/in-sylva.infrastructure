@@ -1,4 +1,4 @@
-FROM node:13
+FROM node:latest
 
 RUN apt-get update && \
     apt-get install -y  git \
@@ -31,15 +31,9 @@ WORKDIR /app/
 
 RUN git clone git@forgemia.inra.fr:in-sylva-development/in-sylva.gatekeeper.git
 
-RUN cd ./in-sylva.gatekeeper && npm install
-
-ENV NODE_ENV production
-ENV PROCESS_TYPE web
-ENV PORT 4000
-
-EXPOSE 4000
+RUN cd ./in-sylva.gatekeeper && yarn
 
 WORKDIR /app/in-sylva.gatekeeper/
 
-CMD [ "pm2-runtime","--name","in-sylva.gatekeeper", "npm run start:prod"]
+CMD [ "pm2-runtime","--name","in-sylva.gatekeeper", "yarn start:prod"]
 # CMD [ "npm", "run", "start:prod" ]
