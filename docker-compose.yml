@@ -52,6 +52,11 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "0.20"
+#          memory: 10000M
     environment:
       PGADMIN_DEFAULT_EMAIL: aytac.ozkan@inra.fr
       PGADMIN_DEFAULT_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
@@ -321,7 +326,7 @@ services:
       IN_SYLVA_GRANT_TYPE: "password"
       IN_SYLVA_REALM: "in-sylva"
     ports:
-     - 8080:8080
+     - 8081:8080
     links:  
       - gatekeeper
       - keycloak
