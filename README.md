@@ -28,11 +28,13 @@ For production workloads, make sure the Linux setting `vm.max_map_count` is set 
 
 `cat /proc/sys/vm/max_map_count`
 
-To increase this value, you have to modify the Docker image. On the RPM install, you can add this setting to the host machines `/etc/sysctl.conf` file by adding the following line:
+To increase this value, you have to modify the host operating system. On the RPM install, you can add this setting to the host machines `/etc/sysctl.conf` file by adding the following line:
 
 `vm.max_map_count=262144`
 
 Then run `sudo sysctl -p` to reload.
+
+This value is controled when you run build.sh script. A warning message will be displayed in case of vm.max_map_count incompatible with Open Distro Elasticsearch Docker image.
 
 The docker-compose.yml file also contains several key settings: `bootstrap.memory_lock=true, ES_JAVA_OPTS=-Xms512m -Xmx512m`, nofile 65536 and port 9600. Respectively, these settings disable memory swapping (along with memlock), set the size of the Java heap (we recommend half of system RAM), set a limit of 65536 open files for the Elasticsearch user, and allow you to access Performance Analyzer on port 9600.
 
@@ -58,9 +60,14 @@ This Compose file contains the following environment variables:
 * **Username:** aytac.ozkan@inra.fr (as a default)
 * **Password:** v2kGBDUaGjXK2VuPyf5R64VS (as a default)
 
+## Access to Portainer
+* **URL:** `http://localhost:9000`
+* **Username:** admin
+* **Password:** on the first connexion, you'll be invited to define a password (minimum 8 characters)
+* 
 ## Generate Certificates
 
-Able to run well secured Elk stack instances with `OpenDistro` on docker, we have to generate some SSL sertificates as below.
+Able to run well secured Elk stack instances with `OpenDistro` on docker, we have to generate some SSL certificates as below.
 
 To generate the necessary certificates, you have to install OpenSSL on your local or host machine.
 

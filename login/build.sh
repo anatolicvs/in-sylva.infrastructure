@@ -7,7 +7,7 @@ while [ "$1" != "" ]; do
     shift
 done
 
-docker build --network=host --no-cache --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSPHRASE="$SSH_KEY_PASSPHRASE" \
+docker build --no-cache --network=host --no-cache --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSPHRASE="$SSH_KEY_PASSPHRASE" \
  --build-arg IN_SYLVA_GATEKEEPER_HOST="0.0.0.0" \
  --build-arg IN_SYLVA_GATEKEEPER_PORT="4000" \
  --build-arg IN_SYLVA_KEYCLOAK_HOST="0.0.0.0" \
