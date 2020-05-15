@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:13
 
 RUN apt-get update && \
     apt-get install -y  git \
@@ -41,5 +41,5 @@ EXPOSE 4000
 
 WORKDIR /app/in-sylva.gatekeeper/
 
-# CMD [ "pm2-runtime","--name","in-sylva.gatekeeper", "npm run start:prod"]
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "pm2-runtime","--name","in-sylva.gatekeeper", "npm run start:prod"]
+# CMD [ "npm", "run", "start:prod" ]

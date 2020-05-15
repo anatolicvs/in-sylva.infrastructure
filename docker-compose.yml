@@ -239,6 +239,7 @@ services:
 
       KEYCLOAK_REALM: in-sylva
       KEYCLOAK_SERVER_URL: http://in-sylva.keycloak:8080/keycloak/auth
+      KEYCLOAK_SERVER_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg4McMvQ2TP6GW0934XK8vceWjiE6IxVLwjSVdyshIIZ/wuqFKLWz0NhvIe22pG9wuddhcwQS0i5ZAy4HMJCXhVueGlqBVCu3ypc7cBogEB3osmpYK/qdWGb17UlVxrw2RujhaPWvioT5iKJOdrjTSKMCR/26oH1LOrNy1zzxTK3m4KNavx0iPt0Z1qYGv0WXJ00vTH4Nda3WDSwj+fioRCMqPwDkiwPFs6CCGOHt8L8GkLKIztXfLvfLsHIR4ua/wX5kJFjsndw+D40UV/xdMFg32Oim2vfvg3rSnXJs90yZ3xa8i5DzwhKFOTmSzDjSnJCk4Xtz1FmN5hapwUjQTwIDAQAB
       
     networks:
       - insylva-net
