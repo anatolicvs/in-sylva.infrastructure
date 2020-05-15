@@ -18,6 +18,15 @@ else
   echo "Key file: $1"
 fi
 
+# Control for elasticsearch and host parameters
+val=0$(grep vm.max_map_count /etc/sysctl.conf | awk -F"=" '{print $2}')
+if [ $val -lt 262144 ]; then
+  echo "ERROR: insylva infrastructure and particularly elasticsearc component won't work"
+  echo "        You must add/increase the /etc/sysctl.conf parameter vm.max_map_count to at least 262144"
+  echo "        So add a line like vm.max_map_count=262144 at the end of the file /etc/sysctl.conf"
+  exit
+fi
+
 echo $publickey
 echo "IN-SYLVA project 'Docker images' list: "
 echo "        --> gatekeeper, keycloak, login, portal, postgresql, sourceman, search, search-api, doc"
