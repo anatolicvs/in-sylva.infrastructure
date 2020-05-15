@@ -51,8 +51,8 @@ This Compose file contains the following environment variables:
 ## Access to postgres
 
 * `localhost:5432`
-* **Username:** postgres (as a default)
-* **Password:** changeme (as a default)
+* **Username:** insylva_admin_pg (as a default)
+* **Password:** v2kGBDUaGjXK2VuPyf5R64VS (as a default)
 
 ## Access to PgAdmin
 
