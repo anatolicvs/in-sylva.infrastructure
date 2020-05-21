@@ -4,12 +4,11 @@ RUN apt-get update && \
     apt-get install -y  git \
     openssh-server
 
-RUN apt-get update && apt-get install wget && apt-get install telnet -y
+RUN apt-get install wget && apt-get install telnet -y
 RUN npm install --global pm2
 
 RUN mkdir /var/run/sshd
 EXPOSE 22 
-
 ARG SSH_KEY
 ARG SSH_KEY_PASSPHRASE
 RUN chmod go-w /root
@@ -35,5 +34,5 @@ RUN cd ./in-sylva.gatekeeper && yarn
 
 WORKDIR /app/in-sylva.gatekeeper/
 
-CMD [ "pm2-runtime","--name","in-sylva.gatekeeper", "yarn start:prod"]
-# CMD [ "npm", "run", "start:prod" ]
+# CMD [ "pm2-runtime","--name","in-sylva.gatekeeper", "yarn start:prod"]
+CMD [ "npm", "run", "start:prod" ]

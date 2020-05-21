@@ -23,7 +23,7 @@ services:
     image: in-sylva.keycloak:latest
     container_name: in-sylva.keycloak
     environment:
-      network.host: 0.0.0.0
+      # network.host: 0.0.0.0
 
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
@@ -39,9 +39,9 @@ services:
       
       # KEYCLOAK_IMPORT: /home/realms/realm-export.json
       # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-      JDBC_PARAMS: useSSL=false
-      JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
-      JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS,info_writer_sleep_time=500,initialize_sql="CREATE TABLE IF NOT EXISTS JGROUPSPING ( own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, created timestamp default current_timestamp, ping_data BYTEA, constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name))"
+      # JDBC_PARAMS: useSSL=false
+      # JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
+      # JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS,info_writer_sleep_time=500,initialize_sql="CREATE TABLE IF NOT EXISTS JGROUPSPING ( own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, created timestamp default current_timestamp, ping_data BYTEA, constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name))"
     ports:
       - 7000:8080
     depends_on:
@@ -52,11 +52,6 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "0.20"
-#          memory: 10000M
     environment:
       PGADMIN_DEFAULT_EMAIL: aytac.ozkan@inra.fr
       PGADMIN_DEFAULT_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
@@ -208,7 +203,7 @@ services:
       ELK_PASSWORD: InSylva146544
 
       KEYCLOAK_REALM: in-sylva
-      KEYCLOAK_SERVER_URL: http://localhost:7000/keycloak/auth
+      KEYCLOAK_SERVER_URL: http://keycloak:7000/keycloak/auth
       KEYCLOAK_CLIENT_ID: in-sylva.user.app
     links: 
       - postgres
@@ -224,7 +219,7 @@ services:
     ports:
       - 4000:4000
     environment:
-      network.host: 0.0.0.0 
+      # network.host: 0.0.0.0 
       PROCESS_TYPE: web 
       NODE_ENV: production
       PORT: 4000
@@ -241,15 +236,14 @@ services:
       KEYCLOAK_USERNAME: insylva_admin
       KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
       KEYCLOAK_GRANT_TYPE: password
-      KEYCLOAK_CLIENT_ID: admin-cli
+      KEYCLOAK_CLIENT_ID: in-sylva.user.app
 
       KEYCLOAK_REALM: in-sylva
       KEYCLOAK_SERVER_URL: http://keycloak:8080/keycloak/auth
-      KEYCLOAK_SERVER_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg4McMvQ2TP6GW0934XK8vceWjiE6IxVLwjSVdyshIIZ/wuqFKLWz0NhvIe22pG9wuddhcwQS0i5ZAy4HMJCXhVueGlqBVCu3ypc7cBogEB3osmpYK/qdWGb17UlVxrw2RujhaPWvioT5iKJOdrjTSKMCR/26oH1LOrNy1zzxTK3m4KNavx0iPt0Z1qYGv0WXJ00vTH4Nda3WDSwj+fioRCMqPwDkiwPFs6CCGOHt8L8GkLKIztXfLvfLsHIR4ua/wX5kJFjsndw+D40UV/xdMFg32Oim2vfvg3rSnXJs90yZ3xa8i5DzwhKFOTmSzDjSnJCk4Xtz1FmN5hapwUjQTwIDAQAB
+      KEYCLOAK_SERVER_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp4KOgK5s+xvmun5sbPzcRLTIvGmVyG+nNdILYKNkpjUuFGvG2KqDNZZsq5rk9EPyrEApnbPWmOZusCn1dVegoGvkfSxkyP7AtVamwZMvTBObG0Ktju47o8/KCk63NPfwdWxSNyhWWa3VV95+l4VctvwAH7MeEV6uTDjsby2+LIojJOE+IWhPoLXiINuQ/GzKrzd30pS0XpMLQdru1vJgLXBPAvcZbYMvIkK3b5zIC02x4mL7PGP2LFZBZxUTMhRoC6cTc7C3uDagF5MHPOqfVl3ycHbm7Hc4bpJGSzqYGINLQ28I59WqM5zc+Wpml0Lmyd6wv5eqUTJWQKdc92DvtQIDAQAB
+      KEYCLOAK_CREDENTIALS_SECRET: 6d1fea7a-b803-440e-b0d7-2b551e2ff2b9
     networks:
       - insylva-net
-    links: 
-      - keycloak
     restart: unless-stopped
 
   source-manager:
@@ -386,3 +380,4 @@ volumes:
 networks:
   insylva-net:
     driver: bridge
+    name: global-insylva-net

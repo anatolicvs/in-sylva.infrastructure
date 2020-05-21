@@ -1,6 +1,6 @@
 FROM centos:latest
 
-ENV KEYCLOAK_VERSION 8.0.0
+ENV KEYCLOAK_VERSION 10.0.1
 ENV JDBC_POSTGRES_VERSION 42.2.5
 ENV JDBC_MYSQL_VERSION 8.0.19
 ENV JDBC_MARIADB_VERSION 2.5.4
@@ -15,7 +15,7 @@ ARG GIT_REPO
 ARG GIT_BRANCH
 ARG KEYCLOAK_DIST=https://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/keycloak-$KEYCLOAK_VERSION.tar.gz
 
-USER root
+# USER root
 
 RUN yum update -y && yum install -y gzip hostname java-11-openjdk-headless openssl tar which && yum clean all
 
@@ -31,9 +31,9 @@ RUN sed -i -e 's/name="\/"/name="\/keycloak\/"/' $JBOSS_HOME/standalone/configur
 RUN sed -i -e 's/name="\/"/name="\/keycloak\/"/' $JBOSS_HOME/standalone/configuration/standalone-ha.xml
 RUN sed -i -e 's/\/auth/\/keycloak\/auth"/' $JBOSS_HOME/welcome-content/index.html
 
-EXPOSE 8080
-EXPOSE 8443
-EXPOSE 5432
+# EXPOSE 8080
+# EXPOSE 8443
+# EXPOSE 5432
 
 ENTRYPOINT [ "/opt/jboss/tools/docker-entrypoint.sh" ]
 

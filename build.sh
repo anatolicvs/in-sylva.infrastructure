@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # echo -n "Enter the name of public key (ex:id_ed25519): "
 # read publickey
 nmcli dev show | grep 'IP4.DNS'
