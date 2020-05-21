@@ -23,8 +23,8 @@ services:
     image: in-sylva.keycloak:latest
     container_name: in-sylva.keycloak
     environment:
-      # network.host: 0.0.0.0
-
+      network.host: 0.0.0.0
+      
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
       DB_PORT: 5432
