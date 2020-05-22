@@ -252,7 +252,8 @@ services:
     environment:
       network.host: 0.0.0.0
       PROCESS_TYPE: web 
-
+      PORT: 5000
+      
       BOT_SERVICE_TOKEN: xoxb-791472305859-913372508932-2CcYhaCRrTLDXzKc5Df9ZMUb 
       BOT_SERVICE_CHANNEL: CPLTQQQ0Y 
 
@@ -276,11 +277,16 @@ services:
       ELK_USERNAME: admin
       ELK_PASSWORD: InSylva146544
 
-      KEYCLOAK_REALM: in-sylva
-      SERVER_URL: http://keycloak:8080/keycloak/auth
-      CLIENT_ID: in-sylva.user.app
+      KEYCLOAK_USERNAME: insylva_admin
+      KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      KEYCLOAK_GRANT_TYPE: password
+      KEYCLOAK_CLIENT_ID: in-sylva.user.app
 
-      PORT: 5000
+      KEYCLOAK_REALM: in-sylva
+      KEYCLOAK_SERVER_URL: http://keycloak:8080/keycloak/auth
+      KEYCLOAK_SERVER_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp4KOgK5s+xvmun5sbPzcRLTIvGmVyG+nNdILYKNkpjUuFGvG2KqDNZZsq5rk9EPyrEApnbPWmOZusCn1dVegoGvkfSxkyP7AtVamwZMvTBObG0Ktju47o8/KCk63NPfwdWxSNyhWWa3VV95+l4VctvwAH7MeEV6uTDjsby2+LIojJOE+IWhPoLXiINuQ/GzKrzd30pS0XpMLQdru1vJgLXBPAvcZbYMvIkK3b5zIC02x4mL7PGP2LFZBZxUTMhRoC6cTc7C3uDagF5MHPOqfVl3ycHbm7Hc4bpJGSzqYGINLQ28I59WqM5zc+Wpml0Lmyd6wv5eqUTJWQKdc92DvtQIDAQAB
+      KEYCLOAK_CREDENTIALS_SECRET: 6d1fea7a-b803-440e-b0d7-2b551e2ff2b9
+
     ports:
       - 5000:5000
     links: 

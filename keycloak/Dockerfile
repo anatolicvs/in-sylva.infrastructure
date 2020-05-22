@@ -15,8 +15,6 @@ ARG GIT_REPO
 ARG GIT_BRANCH
 ARG KEYCLOAK_DIST=https://downloads.jboss.org/keycloak/$KEYCLOAK_VERSION/keycloak-$KEYCLOAK_VERSION.tar.gz
 
-# USER root
-
 RUN yum update -y && yum install -y gzip hostname java-11-openjdk-headless openssl tar which && yum clean all
 
 ADD tools /opt/jboss/tools
@@ -30,10 +28,6 @@ RUN sed -i -e 's/<web-context>auth<\/web-context>/<web-context>keycloak\/auth<\/
 RUN sed -i -e 's/name="\/"/name="\/keycloak\/"/' $JBOSS_HOME/standalone/configuration/standalone.xml
 RUN sed -i -e 's/name="\/"/name="\/keycloak\/"/' $JBOSS_HOME/standalone/configuration/standalone-ha.xml
 RUN sed -i -e 's/\/auth/\/keycloak\/auth"/' $JBOSS_HOME/welcome-content/index.html
-
-# EXPOSE 8080
-# EXPOSE 8443
-# EXPOSE 5432
 
 ENTRYPOINT [ "/opt/jboss/tools/docker-entrypoint.sh" ]
 
