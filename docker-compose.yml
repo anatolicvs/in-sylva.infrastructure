@@ -341,13 +341,12 @@ services:
     environment:
       network.host: 0.0.0.0
     ports:
-      - 3001:3000
+      - 3001:3001
     links:
       - gatekeeper
       - keycloak
       - source-manager
       - search-api
-      - login
     networks:
       - insylva-net
     restart: unless-stopped
