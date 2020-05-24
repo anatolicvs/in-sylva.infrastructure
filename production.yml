@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 
 services:
 
@@ -36,10 +36,6 @@ services:
 
       KEYCLOAK_USER: insylva_admin
       KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
-      # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-      # JDBC_PARAMS: useSSL=false
-      # JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
-      # JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS,info_writer_sleep_time=500,initialize_sql="CREATE TABLE IF NOT EXISTS JGROUPSPING ( own_addr varchar(200) NOT NULL, cluster_name varchar(200) NOT NULL, created timestamp default current_timestamp, ping_data BYTEA, constraint PK_JGROUPSPING PRIMARY KEY (own_addr, cluster_name))"
     ports:
       - 7000:8080
     depends_on:
@@ -123,8 +119,6 @@ services:
       - 9600:9600 # required for Performance Analyzer
     networks:
       - insylva-net
-    depends_on: 
-      - odfe-node2
     restart: unless-stopped
 
   odfe-node2:
@@ -219,7 +213,7 @@ services:
     ports:
       - 4000:4000
     environment:
-      # network.host: 0.0.0.0 
+
       PROCESS_TYPE: web 
       NODE_ENV: production
       PORT: 4000
@@ -236,7 +230,7 @@ services:
       KEYCLOAK_USERNAME: insylva_admin
       KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
       KEYCLOAK_GRANT_TYPE: password
-      KEYCLOAK_CLIENT_ID: admin-cli
+      KEYCLOAK_CLIENT_ID: in-sylva.user.app
 
       KEYCLOAK_REALM: in-sylva
       KEYCLOAK_SERVER_URL: http://keycloak:8080/keycloak/auth
@@ -280,7 +274,7 @@ services:
       KEYCLOAK_USERNAME: insylva_admin
       KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
       KEYCLOAK_GRANT_TYPE: password
-      KEYCLOAK_CLIENT_ID: admin-cli
+      KEYCLOAK_CLIENT_ID: in-sylva.user.app
 
       KEYCLOAK_REALM: in-sylva
       KEYCLOAK_SERVER_URL: http://keycloak:8080/keycloak/auth
@@ -343,14 +337,9 @@ services:
     container_name: in-sylva.search
     environment: 
       network.host: 0.0.0.0
+      REACT_APP_IP: 147.100.20.44 
     ports:
       - 3001:3000
-    links: 
-      - gatekeeper
-      - keycloak
-      - source-manager
-      - search-api
-      - login
     networks:
       - insylva-net
     restart: unless-stopped
