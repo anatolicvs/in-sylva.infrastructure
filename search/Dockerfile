@@ -29,11 +29,11 @@ WORKDIR /app/
 
 RUN git clone git@forgemia.inra.fr:in-sylva-development/in-sylva.search.app.git
 
-RUN cd ./in-sylva.search.app && npm install
+RUN cd ./in-sylva.search.app && yarn
 
 WORKDIR /app/in-sylva.search.app/
 
-ENV PORT=3000
+ENV PORT=3001
 ENV PATH /app/in-sylva.search.app/node_modules/.bin:$PATH
 
 RUN yarn build
@@ -41,11 +41,20 @@ RUN yarn build
 # production environment
 FROM nginx:latest
 
+RUN apt-get update && apt-get install wget -y && apt-get install telnet -y
+
+RUN apt-get install iputils-ping -y
+
+RUN apt-get update && apt-get install nginx-extras -y
+
+RUN apt-get install curl gnupg2 ca-certificates lsb-release -y
+
 COPY --from=search /app/in-sylva.search.app/build /usr/share/nginx/html
 
 RUN rm /etc/nginx/conf.d/default.conf
 
 COPY nginx/nginx.conf /etc/nginx/conf.d
+COPY nginx/gzip.conf /etc/nginx/conf.d
 
 WORKDIR /usr/share/nginx/html
 COPY ./env.sh .
@@ -55,6 +64,6 @@ COPY .env .
 RUN chmod +x env.sh
 RUN ./env.sh
 
-EXPOSE 3000
+EXPOSE 3001
 
 CMD ["nginx", "-g", "daemon off;"]

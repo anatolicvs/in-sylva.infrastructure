@@ -29,7 +29,7 @@ WORKDIR /app/
 
 RUN git clone git@forgemia.inra.fr:in-sylva-development/in-sylva.portal.git
 
-RUN cd ./in-sylva.portal && npm install
+RUN cd ./in-sylva.portal && yarn
 
 WORKDIR /app/in-sylva.portal/
 
@@ -72,7 +72,7 @@ RUN rm /etc/nginx/conf.d/default.conf
 
 COPY nginx/nginx.conf /etc/nginx/conf.d
 COPY nginx/gzip.conf /etc/nginx/conf.d
-COPY nginx/hello_world.js /etc/nginx/hello_world.js
+COPY nginx/hello_world.js /etc/nginx/conf.d/hello_world.js
 
 WORKDIR /usr/share/nginx/html
 COPY ./env.sh .
