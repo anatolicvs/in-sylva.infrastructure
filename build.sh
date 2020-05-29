@@ -2,7 +2,7 @@
 
 # echo -n "Enter the name of public key (ex:id_ed25519): "
 # read publickey
-# nmcli dev show | grep 'IP4.DNS'  # philippe: don't understand what it is for ...commented
+ nmcli dev show | grep 'IP4.DNS'  # philippe: don't understand what it is for
 
 Usage(){ 
   echo "##############$0 USAGE########################"
@@ -32,7 +32,8 @@ while [[ $# != 0 ]];do
         Usage 
         exit
       else
-        echo "Key file: $1"
+	KEY=$1
+        echo "Key file: $KEY"
       fi;;
     -t)
       shift
@@ -111,76 +112,76 @@ fi
 
 case $imageName in
     "gatekeeper")
-        sh ./gatekeeper/build.sh $1
+        sh ./gatekeeper/build.sh $KEY
         wait 
         echo -e $"gatekeeper image Successfully built\n"
         ;;
     "keycloak")
-        sh ./keycloak/build.sh $1
+        sh ./keycloak/build.sh $KEY
         wait
         echo -e $"keycloak image Successfully built\n"
         ;;
     "login")
-        sh ./login/build.sh $1
+        sh ./login/build.sh $KEY
         wait
         echo -e $"login image Successfully built\n"
         ;;
     "portal")
-        sh ./portal/build.sh $1
+        sh ./portal/build.sh $KEY
         wait
         echo -e $"portal image Successfully built\n"
         ;;
     "postgresql")
-        sh ./postgresql/build.sh $1
+        sh ./postgresql/build.sh $KEY
         wait
         echo -e $"postgresql image Successfully built\n"
         ;;
     "sourceman")
-       sh ./source.manager/build.sh $1
+       sh ./source.manager/build.sh $KEY
        wait
        echo -e $"source.manager image Successfully built\n"
        ;;
     "search")
-       sh ./search/build.sh $1
+       sh ./search/build.sh $KEY
        wait
        echo -e $"search image Successfully built\n"
        ;;
     "search-api")
-       sh ./search.api/build.sh $1
+       sh ./search.api/build.sh $KEY
        wait
        echo -e $"search.api image Successfully built\n"
        ;;
     "doc")
-      sh ./doc/build.sh $1
+      sh ./doc/build.sh $KEY
       wait
       echo $"doc image Successfully built\n"
       ;;
     "all")
-      sh ./gatekeeper/build.sh $1
+      sh ./gatekeeper/build.sh $KEY
       wait 
       echo -e $"gatekeeper image Successfully built\n"
-      sh ./keycloak/build.sh $1
+      sh ./keycloak/build.sh $KEY
       wait
       echo -e $"keycloak image Successfully built\n"
-      sh ./login/build.sh $1
+      sh ./login/build.sh $KEY
       wait
       echo -e $"login image Successfully built\n"
-      sh ./portal/build.sh $1
+      sh ./portal/build.sh $KEY
       wait
       echo -e $"portal image Successfully built\n"
-      sh ./postgresql/build.sh $1
+      sh ./postgresql/build.sh $KEY
       wait
       echo -e $"postgresql image Successfully built\n"
-      sh ./source.manager/build.sh $1
+      sh ./source.manager/build.sh $KEY
       wait
       echo -e $"source.manager image Successfully built\n"
-      sh ./search/build.sh $1
+      sh ./search/build.sh $KEY
       wait
       echo -e $"search image Successfully built\n"
-      sh ./search.api/build.sh $1
+      sh ./search.api/build.sh $KEY
       wait
       echo -e $"search.api image Successfully built\n"
-      sh ./doc/build.sh $1
+      sh ./doc/build.sh $KEY
       wait
       echo $"doc image Successfully built\n"
       ;;
