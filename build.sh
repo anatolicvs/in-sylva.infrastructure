@@ -2,20 +2,90 @@
 
 # echo -n "Enter the name of public key (ex:id_ed25519): "
 # read publickey
-nmcli dev show | grep 'IP4.DNS'
+# nmcli dev show | grep 'IP4.DNS'  # philippe: don't understand what it is for ...commented
 
-if [ "$1" == "" ]
-then
-     set $"id_ed25519"
-     echo "Setting ssh key to default: $1"
-fi
+Usage(){ 
+  echo "##############$0 USAGE########################"
+  echo "Script $0 -k <ssh_key_file> -t {dev|prod} <-d domain_name>" 
+  echo "Use it to build in-sylva docker infrastructure" 
+  echo "##############################################" 
+  echo "$0 -k id_rsa -t dev  : start building for development; " 
+  echo "$0 -k id_rsa -t prod -d w3.avignon.inra.fr/bas_insylva/portal/: start building for production; The portal page would be accessible thru URL: http://w3.avignon.inra.fr/bas_insylva/portal/" 
+  echo "##############################################" 
+  echo "Args:" 
+  echo "-k <ssh_key_file>: mandatory. id_rsa keyfile should exits in ~/.ssh/ user directory " 
+  echo "-t {dev|prod}: mandatory. If <prod> deployment is choosen, you must precise -d argument" 
+  echo "-d domain_name: mandatory in production deploiement. Precise the base URL which will be use to contact application." 
+  echo "    domain_name should appear as <domain>/<path1>/<path2>/"
+  echo "    Example: w3.avignon.inra.fr/bas_insylva/portal/"
+  echo "##############################################" 
+  exit 
+}
 
-if [ ! -e ~/.ssh/$1.pub ]; then
-  echo "ERROR: the $1 key file does not exit. Check and relaunch ..."
+while [[ $# != 0 ]];do
+  opt="$1"
+  case $opt in
+    -k)
+      shift
+      if [ ! -e ~/.ssh/$1.pub ]; then
+        echo "ERROR: the $1 key file does not exit. Check and relaunch ..."
+        Usage 
+        exit
+      else
+        echo "Key file: $1"
+      fi;;
+    -t)
+      shift
+      case $1 in
+        dev) MODE=dev;;
+        prod) MODE=prod;;
+        *) 
+          echo "ERROR: unknown $1 mode for -t option. Check and relaunch ..."
+          Usage
+          exit
+      esac;;
+    -d)
+      shift
+      DOMAIN=$1
+      echo "INFO: using $DOMAIN as domaine name";;
+  esac 
+  shift  
+done
+
+if [ -z $MODE ]; then 
+  echo "ERROR: the -t option is mandatory. Check Usage and relaunch"
+  Usage
   exit
-else
-  echo "Key file: $1"
 fi
+
+if [ "$MODE" == "prod" -a -z "$DOMAIN" ]; then
+  echo "ERROR: when using prod mode, you must specify a domain name. Check Usage and relaunch"
+  Usage
+  exit
+fi
+
+# checking $DOMAIN and creating PATH for redirections
+if [ ! -z "$DOMAIN" ]; then
+  NGINXCONF=$(echo $DOMAIN | cut -d/ -f2- | sed -e 's,^,/,' | sed -e 's,/$,,')
+  echo "INFO: NGINX_BASE_URL = $NGINXCONF"
+fi
+
+# creating .env and nginx.conf files from generic version 
+rm -f search/.env portal/.env search/nginx/nginx.conf portal/nginx/nginx.conf
+
+cp search/.env_generic search/.env
+cp portal/.env_generic portal/.env
+cp search/nginx/nginx_generic.conf search/nginx/nginx.conf 
+cp portal/nginx/nginx_generic.conf portal/nginx/nginx.conf 
+if [ "$MODE" == "prod" ];then
+  sed -i -e "s,server_name .,server_name $DOMAIN," search/nginx/nginx.conf
+  sed -i -e "s,server_name .,server_name $DOMAIN," portal/nginx/nginx.conf
+
+  sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/," search/.env
+  sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/," portal/.env
+fi
+
+
 
 # Control for elasticsearch and host parameters
 val=0$(grep vm.max_map_count /etc/sysctl.conf | awk -F"=" '{print $2}')
