@@ -17,6 +17,7 @@ done
 # --build-arg IN_SYLVA_GATEKEEPER_PORT="4000" \
 
 docker build --no-cache --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSPHRASE="$SSH_KEY_PASSPHRASE" \
+ --build-arg MODE_ENV="production" \
  --build-arg IN_SYLVA_CLIENT_ID="in-sylva.user.app" \
  --build-arg IN_SYLVA_GRANT_TYPE="password" \
  --build-arg IN_SYLVA_REALM="in-sylva" \
