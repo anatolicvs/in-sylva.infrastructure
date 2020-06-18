@@ -105,7 +105,7 @@ if [ "$MODE" == "prod" ];then
   # search customization
   sed -i -e "s,server_name .,server_name $DOMAIN/search/," search/nginx/nginx.conf
   sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/search/," search/.env
-  sed -i -e "s,REACT_APP_IN_SYLVA_LOGIN_HOST=.*,REACT_APP_IN_SYLVA_LOGIN_HOST=http://${DOMAIN}," search/.env
+  sed -i -e "s,REACT_APP_IN_SYLVA_LOGIN_HOST=.*,REACT_APP_IN_SYLVA_LOGIN_HOST=http://${DOMAIN}login/," search/.env
 
   # portal customization
   sed -i -e "s,server_name .,server_name $DOMAIN/portal/," portal/nginx/nginx.conf
@@ -115,9 +115,9 @@ fi
 
 # login customization
 
-if [ "$MODE" == "prod" ]; then
-  cat ipconfig_generic.txt | sed -e "s/0.0.0.0/$LOGINSERVER/" -e "s/8080/$LOGINPORT/" > ipconfig.txt
-fi
+#if [ "$MODE" == "prod" ]; then
+#  cat ipconfig_generic.txt | sed -e "s/0.0.0.0/$LOGINSERVER/" -e "s/8080/$LOGINPORT/" > ipconfig.txt
+#fi
 export IN_SYLVA_KEYCLOAK_HOST=$(grep IN_SYLVA_KEYCLOAK_HOST ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_KEYCLOAK_PORT=$(grep IN_SYLVA_KEYCLOAK_PORT ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_PORTAL_HOST=$(grep IN_SYLVA_PORTAL_HOST ipconfig.txt| awk '{print $2}')
