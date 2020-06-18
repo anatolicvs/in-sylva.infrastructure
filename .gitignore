@@ -1,2 +1,6 @@
-.env
-nginx.conf
+search/.env
+portal/.env
+portal/nginx/nginx.conf
+search/nginx/nginx.conf
+ipconfig.txt
+.env_good

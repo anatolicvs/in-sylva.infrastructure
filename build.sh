@@ -9,8 +9,11 @@ Usage(){
   echo "Script $0 -k <ssh_key_file> -t {dev|prod} <-d domain_name>" 
   echo "Use it to build in-sylva docker infrastructure" 
   echo "##############################################" 
-  echo "$0 -k id_rsa -t dev  : start building for development; " 
-  echo "$0 -k id_rsa -t prod -d w3.avignon.inra.fr/bas_insylva/portal/: start building for production; The portal page would be accessible thru URL: http://w3.avignon.inra.fr/bas_insylva/portal/" 
+  echo "$0 -k id_rsa -t dev" 
+  echo "           * Starts building for development; " 
+  echo "$0 -k id_rsa -t prod -d w3.avignon.inra.fr/bas_insylva/ -s 147.100.20.44 -p 8081"
+  echo "           * The portal page would be accessible with URL: http://w3.avignon.inra.fr/bas_insylva/portal/" 
+  echo "           * The login page will be http://147.100.20.44:8081"
   echo "##############################################" 
   echo "Args:" 
   echo "-k <ssh_key_file>: mandatory. id_rsa keyfile should exits in ~/.ssh/ user directory " 
@@ -18,6 +21,8 @@ Usage(){
   echo "-d domain_name: mandatory in production deploiement. Precise the base URL which will be use to contact application." 
   echo "    domain_name should appear as <domain>/<path1>/<path2>/"
   echo "    Example: w3.avignon.inra.fr/bas_insylva/portal/"
+  echo "-s <ip address>: mandatory in production deploiement. Precise the ip address of the server (used for direct access to search application in production mode)"
+  echo "-p <port number>: mandatory in production deploiement. Precise the port number of the server (used for direct access to login application in production mode)"
   echo "##############################################" 
   exit 
 }
@@ -49,6 +54,14 @@ while [[ $# != 0 ]];do
       shift
       DOMAIN=$1
       echo "INFO: using $DOMAIN as domaine name";;
+    -s)
+      shift
+      LOGINSERVER=$1
+      echo "INFO: server used is $LOGINSERVER";;
+    -p)  
+      shift
+      LOGINPORT=$1
+      echo "INFO: port used is $LOGINPORT";;
   esac 
   shift  
 done
@@ -60,9 +73,18 @@ if [ -z $MODE ]; then
 fi
 
 if [ "$MODE" == "prod" -a -z "$DOMAIN" ]; then
-  echo "ERROR: when using prod mode, you must specify a domain name. Check Usage and relaunch"
-  Usage
-  exit
+  DOMAIN="w3.avignon.inra.fr/bas_insylva/"
+  echo "INFO: no domain defined. Using $DOMAIN"
+fi
+
+if [ "$MODE" == "prod" -a -z "$LOGINSERVER" ]; then
+  LOGINSERVER="147.100.20.44"
+  echo "INFO: no ip address defined. Using $LOGINSERVER"
+fi
+
+if [ "$MODE" == "prod" -a -z "$LOGINPORT" ]; then
+  LOGINPORT="3001"
+  echo "INFO: no port defined. Using $LOGINPORT"
 fi
 
 # checking $DOMAIN and creating PATH for redirections
@@ -79,14 +101,31 @@ cp portal/.env_generic portal/.env
 cp search/nginx/nginx_generic.conf search/nginx/nginx.conf 
 cp portal/nginx/nginx_generic.conf portal/nginx/nginx.conf 
 if [ "$MODE" == "prod" ];then
-  sed -i -e "s,server_name .,server_name $DOMAIN," search/nginx/nginx.conf
-  sed -i -e "s,server_name .,server_name $DOMAIN," portal/nginx/nginx.conf
+  
+  # search customization
+  sed -i -e "s,server_name .,server_name $DOMAIN/search/," search/nginx/nginx.conf
+  sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/search/," search/.env
+  sed -i -e "s,REACT_APP_IN_SYLVA_LOGIN_HOST=.*,REACT_APP_IN_SYLVA_LOGIN_HOST=http://${DOMAIN}," search/.env
 
-  sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/," search/.env
-  sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/," portal/.env
+  # portal customization
+  sed -i -e "s,server_name .,server_name $DOMAIN/portal/," portal/nginx/nginx.conf
+  sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/portal/," portal/.env
+  
 fi
 
+# login customization
 
+if [ "$MODE" == "prod" ]; then
+  cat ipconfig_generic.txt | sed -e "s/0.0.0.0/$LOGINSERVER/" -e "s/8080/$LOGINPORT/" > ipconfig.txt
+fi
+export IN_SYLVA_KEYCLOAK_HOST=$(grep IN_SYLVA_KEYCLOAK_HOST ipconfig.txt| awk '{print $2}')
+export IN_SYLVA_KEYCLOAK_PORT=$(grep IN_SYLVA_KEYCLOAK_PORT ipconfig.txt| awk '{print $2}')
+export IN_SYLVA_PORTAL_HOST=$(grep IN_SYLVA_PORTAL_HOST ipconfig.txt| awk '{print $2}')
+export IN_SYLVA_PORTAL_PORT=$(grep IN_SYLVA_PORTAL_PORT ipconfig.txt| awk '{print $2}')
+export IN_SYLVA_GATEKEEPER_HOST=$(grep IN_SYLVA_GATEKEEPER_HOST ipconfig.txt| awk '{print $2}')
+export IN_SYLVA_GATEKEEPER_PORT=$(grep IN_SYLVA_GATEKEEPER_PORT ipconfig.txt| awk '{print $2}')
+export IN_SYLVA_SEARCH_PORT=$(grep IN_SYLVA_SEARCH_PORT ipconfig.txt| awk '{print $2}')
+export IN_SYLVA_SEARCH_HOST=$(grep IN_SYLVA_SEARCH_HOST ipconfig.txt| awk '{print $2}')
 
 # Control for elasticsearch and host parameters
 val=0$(grep vm.max_map_count /etc/sysctl.conf | awk -F"=" '{print $2}')
