@@ -56,6 +56,8 @@ RUN rm /etc/nginx/conf.d/default.conf
 COPY nginx/nginx.conf /etc/nginx/conf.d
 COPY nginx/gzip.conf /etc/nginx/conf.d
 
+RUN chown -R :www-data /usr/share/nginx/html
+
 WORKDIR /usr/share/nginx/html
 COPY ./env.sh .
 COPY .env .

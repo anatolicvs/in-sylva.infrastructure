@@ -70,6 +70,8 @@ COPY --from=portal /app/in-sylva.portal/build /usr/share/nginx/html
 
 RUN rm /etc/nginx/conf.d/default.conf
 
+RUN chown -R :www-data /usr/share/nginx/html
+
 COPY nginx/nginx.conf /etc/nginx/conf.d
 COPY nginx/gzip.conf /etc/nginx/conf.d
 COPY nginx/hello_world.js /etc/nginx/conf.d/hello_world.js
