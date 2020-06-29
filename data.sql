@@ -277,6 +277,9 @@ CREATE TABLE IF NOT EXISTS profile_specifications(
     updatedAt timestamp
 ); 
 
+\connect keycloak
+
+update REALM set ssl_required = 'NONE' where id = 'master';
 
 /*
 CREATE OR REPLACE FUNCTION func_role_updater() RETURNS TRIGGER AS $BODY$

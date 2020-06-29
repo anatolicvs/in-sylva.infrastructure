@@ -40,7 +40,7 @@ RUN yarn build
 # production environment
 FROM nginx:1.18.0
 
-RUN apt-get update && apt-get install wget -y && apt-get install telnet -y
+RUN apt-get update && apt-get install wget -y && apt-get install telnet -y && apt-get install vim -y
 
 RUN apt-get install iputils-ping -y
 
@@ -51,7 +51,7 @@ RUN apt-get install curl gnupg2 ca-certificates lsb-release -y
 RUN echo "deb http://nginx.org/packages/debian `lsb_release -cs` nginx" \
     | tee /etc/apt/sources.list.d/nginx.list
 RUN echo "deb http://nginx.org/packages/mainline/debian `lsb_release -cs` nginx" \
-    | tee /etc/apt/sources.list.d/nginx.list
+   | tee /etc/apt/sources.list.d/nginx.list
 
 RUN curl -fsSL https://nginx.org/keys/nginx_signing.key | apt-key add -
 
