@@ -7,8 +7,6 @@ while [ "$1" != "" ]; do
     shift
 done
 
-
-
 docker build --no-cache --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSPHRASE="$SSH_KEY_PASSPHRASE" \
  --build-arg MODE_ENV="production" \
  --build-arg IN_SYLVA_CLIENT_ID="in-sylva.user.app" \
