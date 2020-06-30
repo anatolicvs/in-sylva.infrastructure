@@ -103,21 +103,26 @@ cp portal/nginx/nginx_generic.conf portal/nginx/nginx.conf
 if [ "$MODE" == "prod" ];then
   
   # search customization
-  sed -i -e "s,server_name .,server_name $DOMAIN/search/," search/nginx/nginx.conf
+  sed -i -e "s,server_name .,server_name ${DOMAIN}search/," search/nginx/nginx.conf
   sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/search/," search/.env
   sed -i -e "s,REACT_APP_IN_SYLVA_LOGIN_HOST=.*,REACT_APP_IN_SYLVA_LOGIN_HOST=http://${DOMAIN}login/," search/.env
 
   # portal customization
-  sed -i -e "s,server_name .,server_name $DOMAIN/portal/," portal/nginx/nginx.conf
+  sed -i -e "s,server_name .,server_name ${DOMAIN}portal/," portal/nginx/nginx.conf
   sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/portal/," portal/.env
   
 fi
 
 # login customization
+cp ipconfig_generic.txt ipconfig.txt
+if [ "$MODE" == "prod" ]; then
+  sed -i -e "s,IP_ADDRESS,${LOGINSERVER}," ipconfig.txt
+  sed -i -e "s,DOMAIN$,${DOMAIN}," ipconfig.txt
+else
+  sed -i -e "s/IP_ADDRESS$/0.0.0.0/" ipconfig.txt
+  sed -i -e "s/DOMAIN$/0.0.0.0/" ipconfig.txt
+fi
 
-#if [ "$MODE" == "prod" ]; then
-#  cat ipconfig_generic.txt | sed -e "s/0.0.0.0/$LOGINSERVER/" -e "s/8080/$LOGINPORT/" > ipconfig.txt
-#fi
 export IN_SYLVA_KEYCLOAK_HOST=$(grep IN_SYLVA_KEYCLOAK_HOST ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_KEYCLOAK_PORT=$(grep IN_SYLVA_KEYCLOAK_PORT ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_PORTAL_HOST=$(grep IN_SYLVA_PORTAL_HOST ipconfig.txt| awk '{print $2}')
@@ -126,6 +131,8 @@ export IN_SYLVA_GATEKEEPER_HOST=$(grep IN_SYLVA_GATEKEEPER_HOST ipconfig.txt| aw
 export IN_SYLVA_GATEKEEPER_PORT=$(grep IN_SYLVA_GATEKEEPER_PORT ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_SEARCH_PORT=$(grep IN_SYLVA_SEARCH_PORT ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_SEARCH_HOST=$(grep IN_SYLVA_SEARCH_HOST ipconfig.txt| awk '{print $2}')
+export IN_SYLVA_SEARCH_PORT=$(grep IN_SYLVA_LOGIN_PORT ipconfig.txt| awk '{print $2}')
+export IN_SYLVA_SEARCH_HOST=$(grep IN_SYLVA_LOGIN_HOST ipconfig.txt| awk '{print $2}')
 
 # Control for elasticsearch and host parameters
 val=0$(grep vm.max_map_count /etc/sysctl.conf | awk -F"=" '{print $2}')
