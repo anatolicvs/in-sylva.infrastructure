@@ -133,6 +133,15 @@ export IN_SYLVA_SEARCH_PORT=$(grep IN_SYLVA_SEARCH_PORT ipconfig.txt| awk '{prin
 export IN_SYLVA_SEARCH_HOST=$(grep IN_SYLVA_SEARCH_HOST ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_SEARCH_PORT=$(grep IN_SYLVA_LOGIN_PORT ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_SEARCH_HOST=$(grep IN_SYLVA_LOGIN_HOST ipconfig.txt| awk '{print $2}')
+export IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN="${DOMAIN}search/keycloak" 
+export IN_SYLVA_PORTAL_HOST_FOR_LOGIN="${DOMAIN}portal" 
+export IN_SYLVA_SEARCH_HOST_FOR_LOGIN="${DOMAIN}search" 
+export IN_SYLVA_GATEKEEPER_HOST_FOR_LOGIN="${DOMAIN}portal/gatekeeper" 
+
+echo $IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN
+echo $IN_SYLVA_PORTAL_HOST_FOR_LOGIN
+echo $IN_SYLVA_SEARCH_HOST_FOR_LOGIN
+echo $IN_SYLVA_GATEKEEPER_HOST_FOR_LOGIN
 
 # Control for elasticsearch and host parameters
 val=0$(grep vm.max_map_count /etc/sysctl.conf | awk -F"=" '{print $2}')
