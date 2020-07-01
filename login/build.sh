@@ -22,7 +22,7 @@ docker build --no-cache --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSP
  --build-arg IN_SYLVA_GATEKEEPER_PORT="4000" \
  --tag in-sylva.user.login ./login/.
  
- # Note: The variables above could not set values from iptables.txt by build.sh
+ # Note: The variables above could not set values from ipconfig.txt by build.sh
  # Please notice, the variables should be set as aboves.
 
  # --build-arg IN_SYLVA_KEYCLOAK_HOST=$IN_SYLVA_KEYCLOAK_HOST \
