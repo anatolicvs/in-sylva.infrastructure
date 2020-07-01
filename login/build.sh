@@ -18,7 +18,7 @@ docker build --no-cache --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSP
  --build-arg IN_SYLVA_KEYCLOAK_PORT="7000" \
  --build-arg IN_SYLVA_PORTAL_HOST="w3.avignon.inra.fr/bas_insylva/portal" \
  --build-arg IN_SYLVA_SEARCH_HOST="w3.avignon.inra.fr/bas_insylva/search" \
- --build-arg IN_SYLVA_GATEKEEPER_HOST="147.100.20.44" \
+ --build-arg IN_SYLVA_GATEKEEPER_HOST="w3.avignon.inra.fr/bas_insylva/portal/gatekeeper" \
  --build-arg IN_SYLVA_GATEKEEPER_PORT="4000" \
  --tag in-sylva.user.login ./login/.
  
