@@ -376,7 +376,21 @@ services:
     ports:
       - 3004:3000
       - 35729:35729
-
+      
+  consul:
+    image: consul:latest
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+      CONSUL_LOCAL_CONFIG: '{"connect": {"enabled": true}}'
+    networks:
+      - insylva-net
+    ports:
+      - '8300:8300'
+      - '8301:8301'
+      - '8301:8301/udp'
+      - '8500:8500'
+      - '8600:8600'
+      - '8600:8600/udp'
 volumes:
   postgres-data:
   pgadmin:
