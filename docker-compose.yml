@@ -1,6 +1,22 @@
 version: "3.7"
 
 services:
+
+  consul:
+    image: consul:latest
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+      CONSUL_LOCAL_CONFIG: '{"connect": {"enabled": true}}'
+    networks:
+      - insylva-net
+    ports:
+      - '8300:8300'
+      - '8301:8301'
+      - '8301:8301/udp'
+      - '8500:8500'
+      - '8600:8600'
+      - '8600:8600/udp'
+
   postgres:
     image: in-sylva.postgres:latest
     container_name: in-sylva.postgres
@@ -241,6 +257,14 @@ services:
       KEYCLOAK_SERVER_URL: http://keycloak:8080/keycloak/auth
       KEYCLOAK_SERVER_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp4KOgK5s+xvmun5sbPzcRLTIvGmVyG+nNdILYKNkpjUuFGvG2KqDNZZsq5rk9EPyrEApnbPWmOZusCn1dVegoGvkfSxkyP7AtVamwZMvTBObG0Ktju47o8/KCk63NPfwdWxSNyhWWa3VV95+l4VctvwAH7MeEV6uTDjsby2+LIojJOE+IWhPoLXiINuQ/GzKrzd30pS0XpMLQdru1vJgLXBPAvcZbYMvIkK3b5zIC02x4mL7PGP2LFZBZxUTMhRoC6cTc7C3uDagF5MHPOqfVl3ycHbm7Hc4bpJGSzqYGINLQ28I59WqM5zc+Wpml0Lmyd6wv5eqUTJWQKdc92DvtQIDAQAB
       KEYCLOAK_CREDENTIALS_SECRET: 6d1fea7a-b803-440e-b0d7-2b551e2ff2b9
+
+      CONSUL_IP: consul
+      CONSUL_PORT: 8500
+
+      SERVICE_IP: gatekeeper  
+      SERVICE_PORT: 4000
+      SERVICE_NAME: in-sylva-gatekeeper
+
     networks:
       - insylva-net
     restart: unless-stopped
@@ -286,6 +310,12 @@ services:
       KEYCLOAK_SERVER_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp4KOgK5s+xvmun5sbPzcRLTIvGmVyG+nNdILYKNkpjUuFGvG2KqDNZZsq5rk9EPyrEApnbPWmOZusCn1dVegoGvkfSxkyP7AtVamwZMvTBObG0Ktju47o8/KCk63NPfwdWxSNyhWWa3VV95+l4VctvwAH7MeEV6uTDjsby2+LIojJOE+IWhPoLXiINuQ/GzKrzd30pS0XpMLQdru1vJgLXBPAvcZbYMvIkK3b5zIC02x4mL7PGP2LFZBZxUTMhRoC6cTc7C3uDagF5MHPOqfVl3ycHbm7Hc4bpJGSzqYGINLQ28I59WqM5zc+Wpml0Lmyd6wv5eqUTJWQKdc92DvtQIDAQAB
       KEYCLOAK_CREDENTIALS_SECRET: 6d1fea7a-b803-440e-b0d7-2b551e2ff2b9
 
+      CONSUL_IP: consul
+      CONSUL_PORT: 8500
+
+      SERVICE_IP: source-manager  
+      SERVICE_PORT: 5000
+      SERVICE_NAME: in-sylva-source-manager
     ports:
       - 5000:5000
     links:
@@ -376,21 +406,7 @@ services:
     ports:
       - 3004:3000
       - 35729:35729
-      
-  consul:
-    image: consul:latest
-    environment:
-      CONSUL_BIND_INTERFACE: eth0
-      CONSUL_LOCAL_CONFIG: '{"connect": {"enabled": true}}'
-    networks:
-      - insylva-net
-    ports:
-      - '8300:8300'
-      - '8301:8301'
-      - '8301:8301/udp'
-      - '8500:8500'
-      - '8600:8600'
-      - '8600:8600/udp'
+
 volumes:
   postgres-data:
   pgadmin:
