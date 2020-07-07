@@ -36,6 +36,68 @@ CREATE TABLE IF NOT EXISTS sources_indices(
    updatedAt timestamp
 );
 
+CREATE TABLE IF NOT EXISTS policies (
+    id serial PRIMARY KEY, 
+    name varchar(50) NOT NULL,
+    is_default boolean default false,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+);
+
+
+CREATE TABLE IF NOT EXISTS policy_field(
+    id serial PRIMARY KEY, 
+    policy_id integer,
+    std_field_id integer, 
+
+    CONSTRAINT policy_field_policy_id_fkey FOREIGN KEY (policy_id)
+        REFERENCES policies(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
+        REFERENCES std_fields(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+);
+
+CREATE TABLE IF NOT EXISTS policy_user(
+    id serial PRIMARY KEY,
+    policy_id integer,
+    user_id integer,
+
+    CONSTRAINT policy_user_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES users(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT policy_user_policy_id_fkey FOREIGN KEY (policy_id)
+        REFERENCES policies(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+); 
+
+CREATE TABLE IF NOT EXISTS source_sharing(
+    id serial PRIMARY KEY,
+    source_id integer,
+    user_id integer,
+
+    CONSTRAINT source_sharing_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES users(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT source_sharing_source_id_fkey FOREIGN KEY (source_id)
+        REFERENCES sources(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+        createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+); 
+
+
 CREATE table IF NOT EXISTS provider_sources (
     id serial PRIMARY KEY,
     user_id integer NOT NULL,
@@ -224,6 +286,7 @@ CREATE table  IF NOT EXISTS user_search_his(
 
     query text,
     name varchar(50),
+    ui_structure text,
     description text,
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
