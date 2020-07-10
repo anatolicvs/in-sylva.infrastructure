@@ -1,13 +1,13 @@
 server.name: kibana
 server.host: "0"
 
-opendistro_security.auth.type: "basicauth"
-opendistro_security.basicauth.enabled: false
-opendistro_security.multitenancy.enabled: true
-opendistro_security.multitenancy.show_roles: true
-opendistro_security.multitenancy.enable_filter: true
-opendistro_security.multitenancy.tenants.enable_global: true
-opendistro_security.multitenancy.tenants.enable_private: true
+# opendistro_security.auth.type: "basicauth"
+# opendistro_security.basicauth.enabled: false
+# opendistro_security.multitenancy.enabled: true
+# opendistro_security.multitenancy.show_roles: true
+# opendistro_security.multitenancy.enable_filter: true
+# opendistro_security.multitenancy.tenants.enable_global: true
+# opendistro_security.multitenancy.tenants.enable_private: true
 
 elasticsearch.hosts: "http://localhost:9200"
 elasticsearch.ssl.verificationMode: none
