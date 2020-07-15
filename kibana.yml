@@ -15,5 +15,5 @@ elasticsearch.username: "kibanaserver"
 elasticsearch.password: "InSylva146544"
 elasticsearch.requestHeadersWhitelist: ["securitytenant", "Authorization"]
 
-opendistro_security.multitenancy.tenants.preferred: ["Private", "Global"]
-opendistro_security.readonly_mode.roles: ["kibana_read_only"]
+# opendistro_security.multitenancy.tenants.preferred: ["Private", "Global"]
+# opendistro_security.readonly_mode.roles: ["kibana_read_only"]

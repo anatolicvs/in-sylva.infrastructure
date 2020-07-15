@@ -45,11 +45,11 @@ CREATE TABLE IF NOT EXISTS policies (
     updatedAt timestamp
 );
 
-
 CREATE TABLE IF NOT EXISTS policy_field(
     id serial PRIMARY KEY, 
     policy_id integer,
     std_field_id integer, 
+    source_id integer, 
 
     CONSTRAINT policy_field_policy_id_fkey FOREIGN KEY (policy_id)
         REFERENCES policies(id) MATCH SIMPLE
@@ -59,11 +59,39 @@ CREATE TABLE IF NOT EXISTS policy_field(
         REFERENCES std_fields(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
+    CONSTRAINT policy_field_source_id_fkey FOREIGN KEY (source_id)
+        REFERENCES sources(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
 );
 
-CREATE TABLE IF NOT EXISTS policy_user(
+
+CREATE TABLE IF NOT EXISTS group (
+    id serial PRIMARY KEY,
+
+    name varchar(50) NOT NULL,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+); 
+
+CREATE TABLE IF NOT EXISTS group_policy (
+    id serial PRIMARY KEY, 
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+); 
+
+CREATE TABLE IF NOT EXISTS group_user (
+    id serial PRIMARY KEY, 
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+); 
+
+/* CREATE TABLE IF NOT EXISTS policy_user(
     id serial PRIMARY KEY,
     policy_id integer,
     user_id integer,
@@ -78,7 +106,7 @@ CREATE TABLE IF NOT EXISTS policy_user(
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
-); 
+); */
 
 CREATE TABLE IF NOT EXISTS source_sharing(
     id serial PRIMARY KEY,
