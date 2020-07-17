@@ -1,7 +1,6 @@
 version: "3.7"
 
 services:
-
   consul:
     image: consul:latest
     container_name: in-sylva-consul
@@ -12,12 +11,12 @@ services:
     networks:
       - insylva-net
     ports:
-      - '8300:8300'
-      - '8301:8301'
-      - '8301:8301/udp'
-      - '8500:8500'
-      - '8600:8600'
-      - '8600:8600/udp'
+      - "8300:8300"
+      - "8301:8301"
+      - "8301:8301/udp"
+      - "8500:8500"
+      - "8600:8600"
+      - "8600:8600/udp"
 
   postgres:
     image: in-sylva.postgres:latest
@@ -128,7 +127,7 @@ services:
       # - ./node.pem:/usr/share/elasticsearch/config/node.pem
       # - ./node-key.pem:/usr/share/elasticsearch/config/node-key.pem
       # - ./admin.pem:/usr/share/elasticsearch/config/admin.pem
-      # - ./admin-key.pem:/usr/share/elasticsearch/config/admin-key.pem
+      #- ./admin-key.pem:/usr/share/elasticsearch/config/admin-key.pem
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - ./internal_users.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml
       - ./roles_mapping.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles_mapping.yml
@@ -181,12 +180,16 @@ services:
     restart: unless-stopped
 
   kibana:
-    image: amazon/opendistro-for-elasticsearch-kibana:latest
+    image: in-sylva.kibana:latest
     container_name: odfe-kibana
     ports:
       - 5601:5601
     volumes:
-      - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+      - type: volume
+        source: logs
+        target: /var/log
+    # volumes:
+    #  - ./kibana.yml:/usr/share/kibana/config/kibana.yml
     environment:
       SERVER_HOST: 0.0.0.0
       ELASTICSEARCH_URL: http://odfe-node1:9200
@@ -197,6 +200,101 @@ services:
     networks:
       - insylva-net
     restart: unless-stopped
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+    container_name: elasticsearch1
+    environment:
+      - node.name=elasticsearch1
+      - cluster.name=docker-cluster
+      - cluster.initial_master_nodes=elasticsearch1
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms256M -Xmx256M"
+      - http.cors.enabled=true
+      - http.cors.allow-origin=*
+      - network.host=_eth0_
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      nproc: 65535
+      memlock:
+        soft: -1
+        hard: -1
+    cap_add:
+      - ALL
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 1G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+    volumes:
+      - type: volume
+        source: logs
+        target: /var/log
+      - type: volume
+        source: esdata1
+        target: /usr/share/elasticsearch/data
+    networks:
+      - insylva-net
+    ports:
+      - 9200:9200
+      - 9300:9300
+  
+  kibana1:
+    image: docker.elastic.co/kibana/kibana:7.8.0
+    container_name: kibana1
+    environment:
+      SERVER_HOST: 0.0.0.0
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    volumes:
+      - type: volume
+        source: logs
+        target: /var/log
+      # - ./kibana.yml:/usr/share/kibana/config/kibana.yml
+    ulimits:
+      nproc: 65535
+      memlock:
+        soft: -1
+        hard: -1
+    cap_add:
+      - ALL
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+    links:
+      - elasticsearch
+    networks:
+      - insylva-net
 
   search-api:
     image: in-sylva.search.api:latest
@@ -258,10 +356,10 @@ services:
       CONSUL_IP: http://in-sylva-consul
       CONSUL_PORT: 8500
 
-      SERVICE_IP: http://gatekeeper  
+      SERVICE_IP: http://gatekeeper
       SERVICE_PORT: 4000
       SERVICE_NAME: in-sylva-gatekeeper-v1
-      
+
       KEYCLOAK_REALM: in-sylva
       KEYCLOAK_SERVER_URL: http://keycloak:8080/keycloak/auth
       KEYCLOAK_SERVER_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp4KOgK5s+xvmun5sbPzcRLTIvGmVyG+nNdILYKNkpjUuFGvG2KqDNZZsq5rk9EPyrEApnbPWmOZusCn1dVegoGvkfSxkyP7AtVamwZMvTBObG0Ktju47o8/KCk63NPfwdWxSNyhWWa3VV95+l4VctvwAH7MeEV6uTDjsby2+LIojJOE+IWhPoLXiINuQ/GzKrzd30pS0XpMLQdru1vJgLXBPAvcZbYMvIkK3b5zIC02x4mL7PGP2LFZBZxUTMhRoC6cTc7C3uDagF5MHPOqfVl3ycHbm7Hc4bpJGSzqYGINLQ28I59WqM5zc+Wpml0Lmyd6wv5eqUTJWQKdc92DvtQIDAQAB
@@ -315,7 +413,7 @@ services:
       CONSUL_IP: in-sylva-consul
       CONSUL_PORT: 8500
 
-      SERVICE_IP: source-manager  
+      SERVICE_IP: source-manager
       SERVICE_PORT: 5000
       SERVICE_NAME: in-sylva-source-manager-v1
     ports:
@@ -415,6 +513,8 @@ volumes:
   odfe-data1:
   odfe-data2:
   portainer_data:
+  logs:
+  esdata1:
 
 networks:
   insylva-net:

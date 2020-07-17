@@ -78,14 +78,32 @@ CREATE TABLE IF NOT EXISTS group (
 ); 
 
 CREATE TABLE IF NOT EXISTS group_policy (
-    id serial PRIMARY KEY, 
+    group_id  integer,
+    policy_id integer,
+
+    CONSTRAINT group_policy_policy_id_fkey FOREIGN KEY (policy_id)
+        REFERENCES policies(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT group_policy_group_id_fkey FOREIGN KEY (group_id)
+        REFERENCES group(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
 ); 
 
 CREATE TABLE IF NOT EXISTS group_user (
-    id serial PRIMARY KEY, 
+    group_id  integer,
+    user_id integer, 
+
+    CONSTRAINT group_user_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES users(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+     CONSTRAINT group_user_group_id_fkey FOREIGN KEY (group_id)
+        REFERENCES group(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp

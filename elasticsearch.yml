@@ -1,4 +1,4 @@
-# opendistro_security.disabled: true
+opendistro_security.disabled: true
 # opendistro_security.ssl.transport.pemcert_filepath: node.pem
 # opendistro_security.ssl.transport.pemkey_filepath: node-key.pem
 # opendistro_security.ssl.transport.pemtrustedcas_filepath: root-ca.pem
@@ -19,7 +19,7 @@
 # opendistro_security.restapi.roles_enabled:
 #     ["all_access", "security_rest_api_access"]
 # cluster.routing.allocation.disk.threshold_enabled: false
-node.max_local_storage_nodes: 3
+# node.max_local_storage_nodes: 3
 # opendistro_security.audit.config.disabled_rest_categories: NONE
 # opendistro_security.audit.config.disabled_transport_categories: NONE
 # opendistro_security.allow_unsafe_democertificates: true
