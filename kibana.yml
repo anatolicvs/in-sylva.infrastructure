@@ -9,6 +9,11 @@ server.host: "0"
 # opendistro_security.multitenancy.tenants.enable_global: true
 # opendistro_security.multitenancy.tenants.enable_private: true
 
+opendistro_security.auth.type: "openid"
+opendistro_security.openid.connect_url: "http://147.100.20.44:7000/keycloak/auth/realms/in-sylva/.well-known/openid-configuration"
+opendistro_security.openid.client_id: "kibana-sso"
+opendistro_security.openid.client_secret: "841d796a-bc3a-4cc8-9fb9-bed6221f66b4"
+
 elasticsearch.hosts: "http://localhost:9200"
 elasticsearch.ssl.verificationMode: none
 elasticsearch.username: "kibanaserver"

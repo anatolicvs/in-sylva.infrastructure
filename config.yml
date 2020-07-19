@@ -18,6 +18,6 @@ opendistro_security:
         config:
           subject_key: preferred_username
           roles_key: roles
-          openid_connect_url: http://147.100.20.44:7000/keycloak/auth/realms/master/.well-known/openid-configuration
+          openid_connect_url: http://147.100.20.44:7000/keycloak/auth/realms/in-sylva/.well-known/openid-configuration
         authentication_backend:
           type: noop  
