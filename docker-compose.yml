@@ -1,6 +1,117 @@
 version: "3.7"
 
 services:
+  create_certs:
+    container_name: create_certs
+    image: docker.elastic.co/elasticsearch/elasticsearch:$VERSION
+    command: >
+      bash -c '
+        if [[ ! -f ./config/certificates/elastic-certificates.p12 ]]; then
+          bin/elasticsearch-certutil cert -out config/certificates/elastic-certificates.p12 -pass ""
+        fi;
+        chown -R 1000:0 /usr/share/elasticsearch/config/certificates
+      '
+    user: "0"
+    working_dir: /usr/share/elasticsearch
+    volumes: ['certs:/usr/share/elasticsearch/config/certificates']
+
+  es01:
+    container_name: es01
+    depends_on: [create_certs]
+    image: docker.elastic.co/elasticsearch/elasticsearch:$VERSION
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - cluster.initial_master_nodes=es01
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=InSylva1465441881
+      - xpack.security.enabled=true
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/certificates/elastic-certificates.p12
+      - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/certificates/elastic-certificates.p12
+    volumes: ['esdata:/usr/share/elasticsearch/data', 'certs:/usr/share/elasticsearch/config/certificates', 'logs:/var/log']
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
+      nproc: 65535
+      memlock:
+        soft: -1
+        hard: -1
+    cap_add:
+      - ALL
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 1G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 10s
+    ports:
+      - "9200:9200"
+    healthcheck:
+      test: curl --cacert $CERTS_DIR/elastic-certificates.p12 -s https://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - insylva-net
+
+  kib01:
+    container_name: kib01
+    depends_on: [es01]
+    image: docker.elastic.co/kibana/kibana:$VERSION
+    environment:
+      - SERVER_HOST=0.0.0.0
+      - ELASTICSEARCH_URL=http://es01:9200
+      - ELASTICSEARCH_HOSTS=http://es01:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=InSylva1465441881
+    volumes: 
+      - type: volume
+        source: logs
+        target: /var/log
+    ports:
+      - "5601:5601"
+    ulimits:
+      nproc: 65535
+      memlock:
+        soft: -1
+        hard: -1
+    cap_add:
+      - ALL
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      resources:
+        limits:
+          cpus: "1"
+          memory: 256M
+        reservations:
+          cpus: "1"
+          memory: 256M
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+        max_attempts: 3
+        window: 120s
+    networks:
+      - insylva-net
+
   consul:
     image: consul:latest
     container_name: in-sylva-consul
@@ -102,200 +213,7 @@ services:
     networks:
       - insylva-net
     restart: unless-stopped
-
-  odfe-node1:
-    image: amazon/opendistro-for-elasticsearch:latest
-    container_name: odfe-node1
-    environment:
-      - cluster.name=odfe-cluster
-      - node.name=odfe-node1
-      - discovery.seed_hosts=odfe-node1,odfe-node2
-      - cluster.initial_master_nodes=odfe-node1,odfe-node2
-      - bootstrap.memory_lock=true # along with the memlock settings below, disables swapping
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m" # minimum and maximum Java heap size, recommend setting both to 50% of system RAM
-      - network.host=0.0.0.0
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536 # maximum number of open files for the Elasticsearch user, set to at least 65536 on modern systems
-        hard: 65536
-    volumes:
-      - odfe-data1:/usr/share/elasticsearch/data
-      # - ./root-ca.pem:/usr/share/elasticsearch/config/root-ca.pem
-      # - ./node.pem:/usr/share/elasticsearch/config/node.pem
-      # - ./node-key.pem:/usr/share/elasticsearch/config/node-key.pem
-      # - ./admin.pem:/usr/share/elasticsearch/config/admin.pem
-      #- ./admin-key.pem:/usr/share/elasticsearch/config/admin-key.pem
-      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - ./internal_users.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml
-      - ./roles_mapping.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles_mapping.yml
-      - ./tenants.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/tenants.yml
-      - ./roles.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles.yml
-      - ./action_groups.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/action_groups.yml
-    ports:
-      - 9200:9200
-      - 9600:9600 # required for Performance Analyzer
-    networks:
-      - insylva-net
-    depends_on:
-      - odfe-node2
-    restart: unless-stopped
-
-  odfe-node2:
-    image: amazon/opendistro-for-elasticsearch:latest
-    container_name: odfe-node2
-    environment:
-      - cluster.name=odfe-cluster
-      - node.name=odfe-node2
-      - discovery.seed_hosts=odfe-node1,odfe-node2
-      - cluster.initial_master_nodes=odfe-node1,odfe-node2
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - network.host=0.0.0.0
-      # - discovery.zen.ping.unicast.hosts=odfe-node1
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-    volumes:
-      - odfe-data2:/usr/share/elasticsearch/data
-      # - ./root-ca.pem:/usr/share/elasticsearch/config/root-ca.pem
-      # - ./node.pem:/usr/share/elasticsearch/config/node.pem
-      # - ./node-key.pem:/usr/share/elasticsearch/config/node-key.pem
-      # - ./admin.pem:/usr/share/elasticsearch/config/admin.pem
-      # - ./admin-key.pem:/usr/share/elasticsearch/config/admin-key.pem
-      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - ./internal_users.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml
-      - ./roles_mapping.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles_mapping.yml
-      - ./tenants.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/tenants.yml
-      - ./roles.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/roles.yml
-      - ./action_groups.yml:/usr/share/elasticsearch/plugins/opendistro_security/securityconfig/action_groups.yml
-    networks:
-      - insylva-net
-    restart: unless-stopped
-
-  kibana:
-    image: in-sylva.kibana:latest
-    container_name: odfe-kibana
-    ports:
-      - 5601:5601
-    volumes:
-      - type: volume
-        source: logs
-        target: /var/log
-    # volumes:
-    #  - ./kibana.yml:/usr/share/kibana/config/kibana.yml
-    environment:
-      SERVER_HOST: 0.0.0.0
-      ELASTICSEARCH_URL: http://odfe-node1:9200
-      ELASTICSEARCH_HOSTS: http://odfe-node1:9200
-    links:
-      - odfe-node1
-      - odfe-node2
-    networks:
-      - insylva-net
-    restart: unless-stopped
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
-    container_name: elasticsearch1
-    environment:
-      - node.name=elasticsearch1
-      - cluster.name=docker-cluster
-      - cluster.initial_master_nodes=elasticsearch1
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms256M -Xmx256M"
-      - http.cors.enabled=true
-      - http.cors.allow-origin=*
-      - network.host=_eth0_
-    ulimits:
-      nofile:
-        soft: 65536
-        hard: 65536
-      nproc: 65535
-      memlock:
-        soft: -1
-        hard: -1
-    cap_add:
-      - ALL
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 10s
-      resources:
-        limits:
-          cpus: "1"
-          memory: 256M
-        reservations:
-          cpus: "1"
-          memory: 1G
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 10s
-    volumes:
-      - type: volume
-        source: logs
-        target: /var/log
-      - type: volume
-        source: esdata1
-        target: /usr/share/elasticsearch/data
-    networks:
-      - insylva-net
-    ports:
-      - 9200:9200
-      - 9300:9300
   
-  kibana1:
-    image: docker.elastic.co/kibana/kibana:7.8.0
-    container_name: kibana1
-    environment:
-      SERVER_HOST: 0.0.0.0
-      ELASTICSEARCH_URL: http://elasticsearch:9200
-      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
-    ports:
-      - 5601:5601
-    volumes:
-      - type: volume
-        source: logs
-        target: /var/log
-      # - ./kibana.yml:/usr/share/kibana/config/kibana.yml
-    ulimits:
-      nproc: 65535
-      memlock:
-        soft: -1
-        hard: -1
-    cap_add:
-      - ALL
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 10s
-      resources:
-        limits:
-          cpus: "1"
-          memory: 256M
-        reservations:
-          cpus: "1"
-          memory: 256M
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-        max_attempts: 3
-        window: 120s
-    links:
-      - elasticsearch
-    networks:
-      - insylva-net
-
   search-api:
     image: in-sylva.search.api:latest
     container_name: in-sylva.search.api
@@ -312,18 +230,18 @@ services:
       DB_DATABASE: insylva
       DB_PORT: 5432
 
-      ELK_HOST: odfe-node1
+      ELK_HOST: es01
       ELK_PORT: 9200
-      ELK_USERNAME: admin
-      ELK_PASSWORD: InSylva146544
+      ELK_USERNAME: elastic
+      ELK_PASSWORD: InSylva1465441881
 
       KEYCLOAK_REALM: in-sylva
       KEYCLOAK_SERVER_URL: http://keycloak:7000/keycloak/auth
       KEYCLOAK_CLIENT_ID: in-sylva.user.app
     links:
       - postgres
-      - odfe-node1
       - keycloak
+      - es01
     networks:
       - insylva-net
     restart: unless-stopped
@@ -395,10 +313,10 @@ services:
       DB_DATABASE: insylva
       DB_PORT: 5432
 
-      ELK_HOST: odfe-node1
+      ELK_HOST: es01
       ELK_PORT: 9200
-      ELK_USERNAME: admin
-      ELK_PASSWORD: InSylva146544
+      ELK_USERNAME: elastic
+      ELK_PASSWORD: InSylva1465441881
 
       KEYCLOAK_USERNAME: insylva_admin
       KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
@@ -421,8 +339,8 @@ services:
     links:
       - mongo
       - postgres
-      - odfe-node1
       - keycloak
+      - es01
     networks:
       - insylva-net
     restart: unless-stopped
@@ -510,11 +428,11 @@ services:
 volumes:
   postgres-data:
   pgadmin:
-  odfe-data1:
-  odfe-data2:
+  esdata:
+  certs:
   portainer_data:
   logs:
-  esdata1:
+  
 
 networks:
   insylva-net:
