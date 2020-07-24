@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS policy_field(
 );
 
 
-CREATE TABLE IF NOT EXISTS group (
+CREATE TABLE IF NOT EXISTS groups (
     id serial PRIMARY KEY,
 
     name varchar(50) NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS group (
     updatedAt timestamp
 ); 
 
-CREATE TABLE IF NOT EXISTS group_policy (
+CREATE TABLE IF NOT EXISTS groups_policy (
     group_id  integer,
     policy_id integer,
 
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS group_policy (
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     CONSTRAINT group_policy_group_id_fkey FOREIGN KEY (group_id)
-        REFERENCES group(id) MATCH SIMPLE
+        REFERENCES groups(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
@@ -126,13 +126,12 @@ CREATE TABLE IF NOT EXISTS group_user (
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
      CONSTRAINT group_user_group_id_fkey FOREIGN KEY (group_id)
-        REFERENCES group(id) MATCH SIMPLE
+        REFERENCES groups(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
 ); 
-
 /* CREATE TABLE IF NOT EXISTS policy_user(
     id serial PRIMARY KEY,
     policy_id integer,
