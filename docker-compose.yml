@@ -216,6 +216,7 @@ services:
   
   search-api:
     image: in-sylva.search.api:latest
+    depends_on: [es01]
     container_name: in-sylva.search.api
     ports:
       - 9001:9001
