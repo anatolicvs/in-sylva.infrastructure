@@ -20,6 +20,30 @@ CREATE TABLE IF NOT EXISTS sources (
     updatedAt timestamp
 );
 
+CREATE table IF NOT EXISTS std_fields(
+    id serial UNIQUE NOT NULL,
+    std_field_id integer,
+
+    category varchar(100),
+    field_name varchar(250),
+    definition_and_comment varchar(250),
+    obligation_or_condition varchar(250),
+    cardinality varchar(200),
+    field_type varchar(100),
+    values text,
+
+    isPublic BOOLEAN,
+    isOptional BOOLEAN,
+    PRIMARY KEY (id),
+
+    CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
+        REFERENCES std_fields(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+);
+
 CREATE TABLE IF NOT EXISTS sources_indices(
    id serial PRIMARY KEY, 
    source_id integer,
@@ -155,30 +179,6 @@ CREATE table IF NOT EXISTS provider_sources (
 
     CONSTRAINT provider_sources_user_id_fkey FOREIGN KEY (user_id)
         REFERENCES users(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    createdAt timestamp NOT NULL DEFAULT NOW(),
-    updatedAt timestamp
-);
-
-CREATE table IF NOT EXISTS std_fields(
-    id serial UNIQUE NOT NULL,
-    std_field_id integer,
-
-    category varchar(100),
-    field_name varchar(250),
-    definition_and_comment varchar(250),
-    obligation_or_condition varchar(250),
-    cardinality varchar(200),
-    field_type varchar(100),
-    values text,
-
-    isPublic BOOLEAN,
-    isOptional BOOLEAN,
-    PRIMARY KEY (id),
-
-    CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
-        REFERENCES std_fields(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
