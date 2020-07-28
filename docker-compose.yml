@@ -25,7 +25,7 @@ services:
       - cluster.initial_master_nodes=es01
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - ELASTIC_PASSWORD=InSylva1465441881
+      - ELASTIC_PASSWORD=$ELASTICSEARCH_PASSWORD
       - xpack.security.enabled=true
       - xpack.security.transport.ssl.enabled=true
       - xpack.security.transport.ssl.verification_mode=certificate
@@ -66,6 +66,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    restart: unless-stopped
     networks:
       - insylva-net
 
@@ -77,8 +78,8 @@ services:
       - SERVER_HOST=0.0.0.0
       - ELASTICSEARCH_URL=http://es01:9200
       - ELASTICSEARCH_HOSTS=http://es01:9200
-      - ELASTICSEARCH_USERNAME=elastic
-      - ELASTICSEARCH_PASSWORD=InSylva1465441881
+      - ELASTICSEARCH_USERNAME=$ELASTICSEARCH_USERNAME
+      - ELASTICSEARCH_PASSWORD=$ELASTICSEARCH_PASSWORD
     volumes: 
       - type: volume
         source: logs
@@ -109,6 +110,7 @@ services:
         delay: 30s
         max_attempts: 3
         window: 120s
+    restart: unless-stopped
     networks:
       - insylva-net
 
@@ -133,12 +135,12 @@ services:
     image: in-sylva.postgres:latest
     container_name: in-sylva.postgres
     volumes:
-      - ./data.sql:/docker-entrypoint-initdb.d/data.sql
-      - ./postgres-data:/var/lib/postgresql/data
+      - ./data.sql:/docker-entrypoint-initdb.d/data.sql:z
+      - postgres_data:/var/lib/postgresql:z
     environment:
       POSTGRES_MULTIPLE_DATABASES: insylva,keycloak
-      POSTGRES_USER: insylva_admin_pg
-      POSTGRES_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      POSTGRES_USER: $POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
       POSTGRES_HOST: postgres
     ports:
       - 5432:5432
@@ -157,12 +159,12 @@ services:
       DB_PORT: 5432
       DB_DATABASE: keycloak
 
-      DB_USER: insylva_admin_pg
-      DB_SCHEMA: public
-      DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      DB_USER: $DB_USER
+      DB_SCHEMA: $DB_SCHEMA
+      DB_PASSWORD: $DB_PASSWORD
 
-      KEYCLOAK_USER: insylva_admin
-      KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      KEYCLOAK_USER: $KEYCLOAK_USER
+      KEYCLOAK_PASSWORD: $KEYCLOAK_PASSWORD
       # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
       # JDBC_PARAMS: useSSL=false
       # JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING
@@ -177,9 +179,10 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
+    depends_on: [postgres]
     environment:
-      PGADMIN_DEFAULT_EMAIL: aytac.ozkan@inra.fr
-      PGADMIN_DEFAULT_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      PGADMIN_DEFAULT_EMAIL: $PGADMIN_DEFAULT_EMAIL
+      PGADMIN_DEFAULT_PASSWORD: $PGADMIN_DEFAULT_PASSWORD
     volumes:
       - pgadmin:/root/.pgadmin
     ports:
@@ -192,8 +195,8 @@ services:
     image: mongo:latest
     container_name: in-sylva.mongodb
     environment:
-      MONGO_INITDB_ROOT_USERNAME: in_sylva_mongoc
-      MONGO_INITDB_ROOT_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_INITDB_ROOT_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_INITDB_ROOT_PASSWORD
       MONGO_INITDB_DATABASE: insylva
     ports:
       - 27017:27017
@@ -208,8 +211,8 @@ services:
     ports:
       - 8881:8081
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: in_sylva_mongoc
-      ME_CONFIG_MONGODB_ADMINPASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      ME_CONFIG_MONGODB_ADMINUSERNAME: $ME_CONFIG_MONGODB_ADMINUSERNAME
+      ME_CONFIG_MONGODB_ADMINPASSWORD: $ME_CONFIG_MONGODB_ADMINPASSWORD
     networks:
       - insylva-net
     restart: unless-stopped
@@ -226,15 +229,15 @@ services:
       NODE_ENV: production
 
       DB_HOST: in-sylva.postgres
-      DB_USERNAME: insylva_admin_pg
-      DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      DB_USERNAME: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
       DB_DATABASE: insylva
       DB_PORT: 5432
 
       ELK_HOST: es01
       ELK_PORT: 9200
-      ELK_USERNAME: elastic
-      ELK_PASSWORD: InSylva1465441881
+      ELK_USERNAME: $ELASTICSEARCH_USERNAME
+      ELK_PASSWORD: $ELASTICSEARCH_PASSWORD
 
       KEYCLOAK_REALM: in-sylva
       KEYCLOAK_SERVER_URL: http://keycloak:7000/keycloak/auth
@@ -260,15 +263,15 @@ services:
 
       DB_HOST: in-sylva.postgres
       DB_PORT: 5432
-      DB_USER: insylva_admin_pg
-      DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
       DB_DATABASE: insylva
 
       IN_SYLVA_KEYCLOAK_HOST: http://keycloak
       IN_SYLVA_KEYCLOAK_PORT: 8080
 
-      KEYCLOAK_USERNAME: insylva_admin
-      KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      KEYCLOAK_USERNAME: $KEYCLOAK_USER
+      KEYCLOAK_PASSWORD: $KEYCLOAK_PASSWORD
       KEYCLOAK_GRANT_TYPE: password
       KEYCLOAK_CLIENT_ID: admin-cli
 
@@ -279,10 +282,10 @@ services:
       SERVICE_PORT: 4000
       SERVICE_NAME: in-sylva-gatekeeper-v1
 
-      KEYCLOAK_REALM: in-sylva
-      KEYCLOAK_SERVER_URL: http://keycloak:8080/keycloak/auth
-      KEYCLOAK_SERVER_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp4KOgK5s+xvmun5sbPzcRLTIvGmVyG+nNdILYKNkpjUuFGvG2KqDNZZsq5rk9EPyrEApnbPWmOZusCn1dVegoGvkfSxkyP7AtVamwZMvTBObG0Ktju47o8/KCk63NPfwdWxSNyhWWa3VV95+l4VctvwAH7MeEV6uTDjsby2+LIojJOE+IWhPoLXiINuQ/GzKrzd30pS0XpMLQdru1vJgLXBPAvcZbYMvIkK3b5zIC02x4mL7PGP2LFZBZxUTMhRoC6cTc7C3uDagF5MHPOqfVl3ycHbm7Hc4bpJGSzqYGINLQ28I59WqM5zc+Wpml0Lmyd6wv5eqUTJWQKdc92DvtQIDAQAB
-      KEYCLOAK_CREDENTIALS_SECRET: 6d1fea7a-b803-440e-b0d7-2b551e2ff2b9
+      KEYCLOAK_REALM: $KEYCLOAK_REALM
+      KEYCLOAK_SERVER_URL: $KEYCLOAK_SERVER_URL
+      KEYCLOAK_SERVER_PUBLIC_KEY: $KEYCLOAK_SERVER_PUBLIC_KEY
+      KEYCLOAK_CREDENTIALS_SECRET: $KEYCLOAK_CREDENTIALS_SECRET
 
     networks:
       - insylva-net
@@ -296,38 +299,38 @@ services:
       PROCESS_TYPE: web
       PORT: 5000
 
-      BOT_SERVICE_TOKEN: xoxb-791472305859-913372508932-2CcYhaCRrTLDXzKc5Df9ZMUb
-      BOT_SERVICE_CHANNEL: CPLTQQQ0Y
+      BOT_SERVICE_TOKEN: $BOT_SERVICE_TOKEN
+      BOT_SERVICE_CHANNEL: $BOT_SERVICE_CHANNEL
 
       IN_SYLVA_GATEKEEPER_HOST: http://in-sylva.gatekeeper
       IN_SYLVA_GATEKEEPER_PORT: 4000
 
       MONGO_HOST: mongo
-      MONGO_USERNAME: in_sylva_mongoc
-      MONGO_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      MONGO_USERNAME: $MONGO_USERNAME
+      MONGO_PASSWORD: $MONGO_PASSWORD
       MONGO_DB_NAME: insylva
       MONGO_PORT: 27017
 
       DB_HOST: postgres
-      DB_USER: insylva_admin_pg
-      DB_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
       DB_DATABASE: insylva
       DB_PORT: 5432
 
       ELK_HOST: es01
       ELK_PORT: 9200
-      ELK_USERNAME: elastic
-      ELK_PASSWORD: InSylva1465441881
+      ELK_USERNAME: $ELASTICSEARCH_USERNAME
+      ELK_PASSWORD: $ELASTICSEARCH_PASSWORD
 
-      KEYCLOAK_USERNAME: insylva_admin
-      KEYCLOAK_PASSWORD: v2kGBDUaGjXK2VuPyf5R64VS
+      KEYCLOAK_USERNAME: $KEYCLOAK_USER
+      KEYCLOAK_PASSWORD: $KEYCLOAK_PASSWORD
       KEYCLOAK_GRANT_TYPE: password
       KEYCLOAK_CLIENT_ID: admin-cli
 
-      KEYCLOAK_REALM: in-sylva
-      KEYCLOAK_SERVER_URL: http://keycloak:8080/keycloak/auth
-      KEYCLOAK_SERVER_PUBLIC_KEY: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp4KOgK5s+xvmun5sbPzcRLTIvGmVyG+nNdILYKNkpjUuFGvG2KqDNZZsq5rk9EPyrEApnbPWmOZusCn1dVegoGvkfSxkyP7AtVamwZMvTBObG0Ktju47o8/KCk63NPfwdWxSNyhWWa3VV95+l4VctvwAH7MeEV6uTDjsby2+LIojJOE+IWhPoLXiINuQ/GzKrzd30pS0XpMLQdru1vJgLXBPAvcZbYMvIkK3b5zIC02x4mL7PGP2LFZBZxUTMhRoC6cTc7C3uDagF5MHPOqfVl3ycHbm7Hc4bpJGSzqYGINLQ28I59WqM5zc+Wpml0Lmyd6wv5eqUTJWQKdc92DvtQIDAQAB
-      KEYCLOAK_CREDENTIALS_SECRET: 6d1fea7a-b803-440e-b0d7-2b551e2ff2b9
+      KEYCLOAK_REALM: $KEYCLOAK_REALM
+      KEYCLOAK_SERVER_URL: $KEYCLOAK_SERVER_URL
+      KEYCLOAK_SERVER_PUBLIC_KEY: $KEYCLOAK_SERVER_PUBLIC_KEY
+      KEYCLOAK_CREDENTIALS_SECRET: $KEYCLOAK_CREDENTIALS_SECRET
 
       CONSUL_IP: in-sylva-consul
       CONSUL_PORT: 8500
@@ -427,7 +430,7 @@ services:
       - 35729:35729
 
 volumes:
-  postgres-data:
+  postgres_data:
   pgadmin:
   esdata:
   certs:

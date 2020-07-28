@@ -18,11 +18,11 @@ Usage(){
   echo "Args:" 
   echo "-k <ssh_key_file>: mandatory. id_rsa keyfile should exits in ~/.ssh/ user directory " 
   echo "-t {dev|prod}: mandatory. If <prod> deployment is choosen, you must precise -d argument" 
-  echo "-d domain_name: mandatory in production deploiement. Precise the base URL which will be use to contact application." 
+  echo "-d domain_name: mandatory in production deployment. Precise the base URL which will be use to contact application." 
   echo "    domain_name should appear as <domain>/<path1>/<path2>/"
   echo "    Example: w3.avignon.inra.fr/bas_insylva/portal/"
-  echo "-s <ip address>: mandatory in production deploiement. Precise the ip address of the server (used for direct access to search application in production mode)"
-  echo "-p <port number>: mandatory in production deploiement. Precise the port number of the server (used for direct access to login application in production mode)"
+  echo "-s <ip address>: mandatory in production deployment. Precise the ip address of the server (used for direct access to search application in production mode)"
+  echo "-p <port number>: mandatory in production deployment. Precise the port number of the server (used for direct access to login application in production mode)"
   echo "##############################################" 
   exit 
 }
