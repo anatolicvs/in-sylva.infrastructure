@@ -324,15 +324,18 @@ CREATE table IF NOT EXISTS roles_users (
 );
 
 CREATE table  IF NOT EXISTS user_search_his(
-    id serial not null,
-    user_id int not null references users(id),
-
-    PRIMARY KEY (id, user_id),
+    id serial primary key,
+    kc_id varchar(100) NOT NULL,
 
     query text,
     name varchar(50),
     ui_structure text,
     description text,
+   
+    CONSTRAINT roles_users_kc_id_fkey FOREIGN KEY  (kc_id)
+        REFERENCES  users(kc_id) MATCH SIMPLE
+        ON UPDATE NO ACTION  ON DELETE  NO ACTION,
+
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
 );
