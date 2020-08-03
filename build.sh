@@ -27,7 +27,7 @@ Usage(){
   exit 
 }
 
-while [[ $# != 0 ]];do
+while [ $# != 0 ];do
   opt="$1"
   case $opt in
     -k)
