@@ -43,7 +43,7 @@ FROM nginx:latest
 
 RUN apt-get update && apt-get install wget -y && apt-get install telnet -y && apt-get install vim -y
 
-RUN apt-get install iputils-ping -y
+# RUN apt-get install iputils-ping -y
 
 RUN apt-get update && apt-get install nginx-extras -y
 
