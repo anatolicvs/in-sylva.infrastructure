@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS policies (
     updatedAt timestamp
 );
 
-CREATE TABLE IF NOT EXISTS policy_field(
+CREATE TABLE IF NOT EXISTS policy_fields(
     id serial PRIMARY KEY, 
     policy_id integer,
     std_field_id integer, 
@@ -101,7 +101,8 @@ CREATE TABLE IF NOT EXISTS groups (
     updatedAt timestamp
 ); 
 
-CREATE TABLE IF NOT EXISTS groups_policy (
+CREATE TABLE IF NOT EXISTS groups_policies (
+    id serial PRIMARY KEY,
     group_id  integer,
     policy_id integer,
 
@@ -117,7 +118,8 @@ CREATE TABLE IF NOT EXISTS groups_policy (
     updatedAt timestamp
 ); 
 
-CREATE TABLE IF NOT EXISTS group_user (
+CREATE TABLE IF NOT EXISTS group_users (
+    id serial PRIMARY KEY,
     group_id  integer,
     user_id integer, 
 
