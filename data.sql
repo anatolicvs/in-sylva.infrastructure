@@ -394,6 +394,11 @@ CREATE TABLE IF NOT EXISTS profile_specifications(
 
 update REALM set ssl_required = 'NONE' where id = 'master';
 
+
+/*
+    DROP SCHEMA public CASCADE;
+    CREATE SCHEMA public;
+*/
 /*
 CREATE OR REPLACE FUNCTION func_role_updater() RETURNS TRIGGER AS $BODY$
     BEGIN
