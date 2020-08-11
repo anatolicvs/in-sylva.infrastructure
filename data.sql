@@ -63,7 +63,12 @@ CREATE TABLE IF NOT EXISTS sources_indices(
 CREATE TABLE IF NOT EXISTS policies (
     id serial PRIMARY KEY, 
     name varchar(50) NOT NULL,
+    source_id integer, 
     is_default boolean default false,
+
+    CONSTRAINT policy_source_id_fkey FOREIGN KEY (source_id)
+        REFERENCES sources(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -73,7 +78,6 @@ CREATE TABLE IF NOT EXISTS policy_fields(
     id serial PRIMARY KEY, 
     policy_id integer,
     std_field_id integer, 
-    source_id integer, 
 
     CONSTRAINT policy_field_policy_id_fkey FOREIGN KEY (policy_id)
         REFERENCES policies(id) MATCH SIMPLE
@@ -81,10 +85,6 @@ CREATE TABLE IF NOT EXISTS policy_fields(
 
     CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
         REFERENCES std_fields(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    CONSTRAINT policy_field_source_id_fkey FOREIGN KEY (source_id)
-        REFERENCES sources(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
