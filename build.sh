@@ -6,22 +6,22 @@
 
 Usage(){ 
   echo "##############$0 USAGE########################"
-  echo "Script $0 -k <ssh_key_file> -t {dev|prod} <-d domain_name>" 
+  echo "Script $0 -k <ssh_key_file> -e {dev|prod} <-d domain_name>" 
   echo "Use it to build in-sylva docker infrastructure" 
   echo "##############################################" 
-  echo "$0 -k id_rsa -t dev" 
+  echo "$0 -k id_rsa -e dev" 
   echo "           * Starts building for development; " 
-  echo "$0 -k id_rsa -t prod -d w3.avignon.inra.fr/bas_insylva/ -s 147.100.20.44 -p 8081"
+  echo "$0 -k id_rsa -e prod -d w3.avignon.inra.fr/bas_insylva/ -ip 147.100.20.44 -p 8081"
   echo "           * The portal page would be accessible with URL: http://w3.avignon.inra.fr/bas_insylva/portal/" 
   echo "           * The login page will be http://147.100.20.44:8081"
   echo "##############################################" 
   echo "Args:" 
   echo "-k <ssh_key_file>: mandatory. id_rsa keyfile should exits in ~/.ssh/ user directory " 
-  echo "-t {dev|prod}: mandatory. If <prod> deployment is choosen, you must precise -d argument" 
+  echo "-e {dev|prod}: mandatory. Switching environment. If <prod> deployment is choosen, you must precise -d argument" 
   echo "-d domain_name: mandatory in production deploiement. Precise the base URL which will be use to contact application." 
   echo "    domain_name should appear as <domain>/<path1>/<path2>/"
   echo "    Example: w3.avignon.inra.fr/bas_insylva/portal/"
-  echo "-s <ip address>: mandatory in production deploiement. Precise the ip address of the server (used for direct access to search application in production mode)"
+  echo "-ip <ip address>: mandatory in production deploiement. Precise the ip address of the server (used for direct access to search application in production mode)"
   echo "-p <port number>: mandatory in production deploiement. Precise the port number of the server (used for direct access to login application in production mode)"
   echo "##############################################" 
   exit 
@@ -40,7 +40,7 @@ while [[ $# != 0 ]];do
 	KEY=$1
         echo "Key file: $KEY"
       fi;;
-    -t)
+    -e)
       shift
       case $1 in
         dev) MODE=dev;;
@@ -54,7 +54,7 @@ while [[ $# != 0 ]];do
       shift
       DOMAIN=$1
       echo "INFO: using $DOMAIN as domaine name";;
-    -s)
+    -ip)
       shift
       LOGINSERVER=$1
       echo "INFO: server used is $LOGINSERVER";;
@@ -160,10 +160,14 @@ echo -n "Enter the name of docker image you want to build locally: (ex:gatekeepe
 
 read imageName
 
+# accepting image name with uppercase: converting them to lower !
+imageName=$(echo "$imageName" | tr '[:upper:]' '[:lower:]')
+
 if [ "$imageName" == "" ]
 then
     set $"all"
 fi
+
 
 case $imageName in
     "gatekeeper")
