@@ -1,5 +1,7 @@
 FROM node:latest
 
+ENV DOCKERIZE_VERSION v0.6.1
+
 RUN apt-get update && \
     apt-get install -y  git \
     openssh-server
@@ -7,6 +9,10 @@ RUN apt-get update && \
 RUN apt-get update && apt-get install wget && apt-get install telnet -y
 RUN npm install --global pm2
 
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+    
 RUN mkdir /var/run/sshd
 EXPOSE 22 
 

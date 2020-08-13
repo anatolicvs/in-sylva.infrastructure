@@ -20,39 +20,6 @@ CREATE TABLE IF NOT EXISTS sources (
     updatedAt timestamp
 );
 
-CREATE TABLE IF NOT EXISTS sources_indices(
-   id serial PRIMARY KEY, 
-   source_id integer,
-
-   index_id varchar(50),
-   mng_id varchar(50) NOT NULL,
-   is_send boolean  default false, 
-
-   CONSTRAINT sources_indices_source_id_fkey FOREIGN KEY (source_id)
-        REFERENCES sources(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION, 
-   
-   createdAt timestamp NOT NULL DEFAULT NOW(),
-   updatedAt timestamp
-);
-
-CREATE table IF NOT EXISTS provider_sources (
-    id serial PRIMARY KEY,
-    user_id integer NOT NULL,
-    source_id integer,
-
-    CONSTRAINT provider_sources_source_id_fkey FOREIGN KEY (source_id)
-        REFERENCES sources(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    CONSTRAINT provider_sources_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES users(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
-
-    createdAt timestamp NOT NULL DEFAULT NOW(),
-    updatedAt timestamp
-);
-
 CREATE table IF NOT EXISTS std_fields(
     id serial UNIQUE NOT NULL,
     std_field_id integer,
@@ -71,6 +38,148 @@ CREATE table IF NOT EXISTS std_fields(
 
     CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
         REFERENCES std_fields(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+);
+
+CREATE TABLE IF NOT EXISTS sources_indices(
+   id serial PRIMARY KEY, 
+   source_id integer,
+
+   index_id varchar(50),
+   mng_id varchar(50) NOT NULL,
+   is_send boolean  default false, 
+
+   CONSTRAINT sources_indices_source_id_fkey FOREIGN KEY (source_id)
+        REFERENCES sources(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION, 
+   
+   createdAt timestamp NOT NULL DEFAULT NOW(),
+   updatedAt timestamp
+);
+
+CREATE TABLE IF NOT EXISTS policies (
+    id serial PRIMARY KEY, 
+    name varchar(50) NOT NULL,
+    source_id integer, 
+    is_default boolean default false,
+
+    CONSTRAINT policy_source_id_fkey FOREIGN KEY (source_id)
+        REFERENCES sources(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+);
+
+CREATE TABLE IF NOT EXISTS policy_fields(
+    id serial PRIMARY KEY, 
+    policy_id integer,
+    std_field_id integer, 
+
+    CONSTRAINT policy_field_policy_id_fkey FOREIGN KEY (policy_id)
+        REFERENCES policies(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
+        REFERENCES std_fields(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+);
+
+
+CREATE TABLE IF NOT EXISTS groups (
+    id serial PRIMARY KEY,
+
+    name varchar(50) NOT NULL,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+); 
+
+CREATE TABLE IF NOT EXISTS groups_policies (
+    id serial PRIMARY KEY,
+    group_id  integer,
+    policy_id integer,
+
+    CONSTRAINT group_policy_policy_id_fkey FOREIGN KEY (policy_id)
+        REFERENCES policies(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT group_policy_group_id_fkey FOREIGN KEY (group_id)
+        REFERENCES groups(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+); 
+
+CREATE TABLE IF NOT EXISTS group_users (
+    id serial PRIMARY KEY,
+    group_id  integer,
+    user_id integer, 
+
+    CONSTRAINT group_user_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES users(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+     CONSTRAINT group_user_group_id_fkey FOREIGN KEY (group_id)
+        REFERENCES groups(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+); 
+/* CREATE TABLE IF NOT EXISTS policy_user(
+    id serial PRIMARY KEY,
+    policy_id integer,
+    user_id integer,
+
+    CONSTRAINT policy_user_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES users(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT policy_user_policy_id_fkey FOREIGN KEY (policy_id)
+        REFERENCES policies(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+); */
+
+CREATE TABLE IF NOT EXISTS source_sharing(
+    id serial PRIMARY KEY,
+    source_id integer,
+    user_id integer,
+
+    CONSTRAINT source_sharing_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES users(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT source_sharing_source_id_fkey FOREIGN KEY (source_id)
+        REFERENCES sources(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+        createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+); 
+
+
+CREATE table IF NOT EXISTS provider_sources (
+    id serial PRIMARY KEY,
+    user_id integer NOT NULL,
+    source_id integer,
+
+    CONSTRAINT provider_sources_source_id_fkey FOREIGN KEY (source_id)
+        REFERENCES sources(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+    CONSTRAINT provider_sources_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES users(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
@@ -217,14 +326,18 @@ CREATE table IF NOT EXISTS roles_users (
 );
 
 CREATE table  IF NOT EXISTS user_search_his(
-    id serial not null,
-    user_id int not null references users(id),
-
-    PRIMARY KEY (id, user_id),
+    id serial primary key,
+    kc_id varchar(100) NOT NULL,
 
     query text,
     name varchar(50),
+    ui_structure text,
     description text,
+   
+    CONSTRAINT roles_users_kc_id_fkey FOREIGN KEY  (kc_id)
+        REFERENCES  users(kc_id) MATCH SIMPLE
+        ON UPDATE NO ACTION  ON DELETE  NO ACTION,
+
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
 );
@@ -281,6 +394,11 @@ CREATE TABLE IF NOT EXISTS profile_specifications(
 
 update REALM set ssl_required = 'NONE' where id = 'master';
 
+
+/*
+    DROP SCHEMA public CASCADE;
+    CREATE SCHEMA public;
+*/
 /*
 CREATE OR REPLACE FUNCTION func_role_updater() RETURNS TRIGGER AS $BODY$
     BEGIN

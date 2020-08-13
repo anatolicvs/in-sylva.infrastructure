@@ -1,0 +1,23 @@
+opendistro_security:
+  dynamic:
+    authc:
+      basic_internal_auth_domain:
+        enabled: true
+        order: 0
+        http_authenticator:
+          type: basic
+          challenge: false
+        authentication_backend:
+          type: internal
+      openid_auth_domain:
+        enabled: true
+        order: 1
+        http_authenticator:
+          type: openid
+          challenge: false
+        config:
+          subject_key: preferred_username
+          roles_key: roles
+          openid_connect_url: http://147.100.20.44:7000/keycloak/auth/realms/in-sylva/.well-known/openid-configuration
+        authentication_backend:
+          type: noop  
