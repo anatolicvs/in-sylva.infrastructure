@@ -390,6 +390,47 @@ CREATE TABLE IF NOT EXISTS profile_specifications(
     updatedAt timestamp
 ); 
 
+CREATE TABLE unblurred_sites
+(
+    id integer NOT NULL,
+    userid integer NOT NULL,
+    x real NOT NULL,
+    y real NOT NULL,
+    geom geometry,
+    blurring_rule character(30) COLLATE pg_catalog."default" NOT NULL,
+    new_point boolean
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+COMMENT ON TABLE unblurred_sites
+    IS 'Spatial table containing unblurred coordinates';
+
+CREATE OR REPLACE FUNCTION add_geom_from_x_y() 
+  RETURNS TRIGGER
+  LANGUAGE PLPGSQL 
+AS $add_geom_from_x_y$  
+BEGIN
+  IF NEW.new_point=true THEN
+    UPDATE unblurred_sites SET 
+      new_point=false,
+      geom = ST_SetSRID(ST_MakePoint(NEW.x, NEW.y), 4326)
+    WHERE id=NEW.id;
+  END IF;
+  RETURN NEW;
+END;
+$add_geom_from_x_y$ ;
+
+DROP TRIGGER IF EXISTS tr_add_geom on unblurred_sites;
+CREATE TRIGGER tr_add_geom
+  AFTER INSERT
+  ON unblurred_sites
+  FOR EACH ROW
+  EXECUTE PROCEDURE add_geom_from_x_y();
+  
+
 \connect keycloak
 
 update REALM set ssl_required = 'NONE' where id = 'master';
