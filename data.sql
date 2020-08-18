@@ -392,7 +392,7 @@ CREATE TABLE IF NOT EXISTS profile_specifications(
 
 CREATE TABLE unblurred_sites
 (
-    id integer NOT NULL,
+    id SERIAL PRIMARY KEY,
     userid integer NOT NULL,
     x real NOT NULL,
     y real NOT NULL,
