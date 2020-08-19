@@ -67,7 +67,7 @@ while [ $# != 0 ];do
 done
 
 if [ -z $MODE ]; then 
-  echo "ERROR: the -t option is mandatory. Check Usage and relaunch"
+  echo "ERROR: the -e option is mandatory. Check Usage and relaunch"
   Usage
   exit
 fi
