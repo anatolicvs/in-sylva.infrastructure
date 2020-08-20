@@ -110,6 +110,7 @@ if [ "$MODE" == "prod" ];then
   # portal customization
   sed -i -e "s,server_name .,server_name ${DOMAIN}portal/," portal/nginx/nginx.conf
   sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/portal/," portal/.env
+  sed -i -e "s,REACT_APP_IN_SYLVA_LOGIN_HOST=.*,REACT_APP_IN_SYLVA_LOGIN_HOST=http://${DOMAIN}login/," portal/.env
   
 fi
 
