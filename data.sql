@@ -1,4 +1,6 @@
 \connect insylva
+CREATE EXTENSION postgis;
+
 CREATE TABLE IF NOT EXISTS users (
     id serial UNIQUE PRIMARY KEY,
     kc_id varchar(100) UNIQUE NOT NULL,
@@ -397,7 +399,7 @@ CREATE TABLE IF NOT EXISTS profile_specifications(
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
-); 
+);
 
 CREATE TABLE unblurred_sites
 (
