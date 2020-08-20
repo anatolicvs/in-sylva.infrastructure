@@ -409,7 +409,10 @@ CREATE TABLE unblurred_sites
     y real NOT NULL,
     geom geometry,
     blurring_rule character(30) COLLATE pg_catalog."default" NOT NULL,
-    new_point boolean
+    new_point boolean,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 )
 WITH (
     OIDS = FALSE
