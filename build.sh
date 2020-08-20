@@ -119,8 +119,8 @@ if [ "$MODE" == "prod" ]; then
   sed -i -e "s,IP_ADDRESS,${LOGINSERVER}," ipconfig.txt
   sed -i -e "s,DOMAIN$,${DOMAIN}," ipconfig.txt
 else
-  sed -i -e "s/IP_ADDRESS$/0.0.0.0/" ipconfig.txt
-  sed -i -e "s/DOMAIN$/0.0.0.0/" ipconfig.txt
+  sed -i -e "s/IP_ADDRESS/0.0.0.0/" ipconfig.txt
+  sed -i -e "s/DOMAIN/0.0.0.0/" ipconfig.txt
 fi
 
 export IN_SYLVA_KEYCLOAK_HOST=$(grep IN_SYLVA_KEYCLOAK_HOST ipconfig.txt| awk '{print $2}')

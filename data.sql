@@ -64,12 +64,17 @@ CREATE TABLE IF NOT EXISTS policies (
     id serial PRIMARY KEY, 
     name varchar(50) NOT NULL,
     source_id integer, 
-    is_default boolean default false,
+    user_id integer, 
+    
+    CONSTRAINT policy_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES users(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     CONSTRAINT policy_source_id_fkey FOREIGN KEY (source_id)
         REFERENCES sources(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE NO ACTION,
 
+    is_default boolean default false,
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
 );
@@ -94,8 +99,12 @@ CREATE TABLE IF NOT EXISTS policy_fields(
 
 CREATE TABLE IF NOT EXISTS groups (
     id serial PRIMARY KEY,
-
     name varchar(50) NOT NULL,
+    user_id integer, 
+    
+    CONSTRAINT groups_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES users(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE NO ACTION,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
