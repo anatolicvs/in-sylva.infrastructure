@@ -77,6 +77,11 @@ if [ "$MODE" == "prod" -a -z "$DOMAIN" ]; then
   echo "INFO: no domain defined. Using $DOMAIN"
 fi
 
+if [ "$MODE" == "dev" -a -z "$DOMAIN" ]; then
+  DOMAIN="localhost"
+  echo "INFO: no domain defined. Using $DOMAIN"
+fi
+
 if [ "$MODE" == "prod" -a -z "$LOGINSERVER" ]; then
   LOGINSERVER="147.100.20.44"
   echo "INFO: no ip address defined. Using $LOGINSERVER"
@@ -134,10 +139,18 @@ export IN_SYLVA_SEARCH_PORT=$(grep IN_SYLVA_SEARCH_PORT ipconfig.txt| awk '{prin
 export IN_SYLVA_SEARCH_HOST=$(grep IN_SYLVA_SEARCH_HOST ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_SEARCH_PORT=$(grep IN_SYLVA_LOGIN_PORT ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_SEARCH_HOST=$(grep IN_SYLVA_LOGIN_HOST ipconfig.txt| awk '{print $2}')
-export IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN="${DOMAIN}search/keycloak" 
-export IN_SYLVA_PORTAL_HOST_FOR_LOGIN="${DOMAIN}portal" 
-export IN_SYLVA_SEARCH_HOST_FOR_LOGIN="${DOMAIN}search" 
-export IN_SYLVA_GATEKEEPER_HOST_FOR_LOGIN="${DOMAIN}portal/gatekeeper" 
+
+if [ "$MODE" == "dev" ]; then
+  export IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN="${DOMAIN}:7000/keycloak" 
+  export IN_SYLVA_PORTAL_HOST_FOR_LOGIN="${DOMAIN}:3000" 
+  export IN_SYLVA_SEARCH_HOST_FOR_LOGIN="${DOMAIN}:3001" 
+  export IN_SYLVA_GATEKEEPER_HOST_FOR_LOGIN="${DOMAIN}:3000/gatekeeper" 
+else 
+  export IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN="${DOMAIN}search/keycloak"  
+  export IN_SYLVA_PORTAL_HOST_FOR_LOGIN="${DOMAIN}portal" 
+  export IN_SYLVA_SEARCH_HOST_FOR_LOGIN="${DOMAIN}search" 
+  export IN_SYLVA_GATEKEEPER_HOST_FOR_LOGIN="${DOMAIN}portal/gatekeeper" 
+fi
 
 echo $IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN
 echo $IN_SYLVA_PORTAL_HOST_FOR_LOGIN
