@@ -2,7 +2,7 @@
 
 # echo -n "Enter the name of public key (ex:id_ed25519): "
 # read publickey
- nmcli dev show | grep 'IP4.DNS'  # check ip address due docker dynamic ip allocation for the containers
+# nmcli dev show | grep 'IP4.DNS'  # check ip address due to docker dynamic ip allocation for the containers
 
 Usage(){ 
   echo "##############$0 USAGE########################"
