@@ -259,6 +259,11 @@ CREATE table IF NOT EXISTS roles(
     updatedAt timestamp
 );
 
+/* Insert default roles */ 
+INSERT INTO roles (name,description) values ('super-admin-test','All/*');
+INSERT INTO roles (name,description) values ('source-manager','Source/*');
+INSERT INTO roles (name,description) values ('normal-user','Search/*');
+
 CREATE table  IF NOT EXISTS realm(
       id serial primary key,
       name varchar(50),
