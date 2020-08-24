@@ -260,7 +260,7 @@ CREATE table IF NOT EXISTS roles(
 );
 
 /* Insert default roles */ 
-INSERT INTO roles (name,description) values ('super-admin-test','All/*');
+INSERT INTO roles (name,description) values ('super-admin','All/*');
 INSERT INTO roles (name,description) values ('source-manager','Source/*');
 INSERT INTO roles (name,description) values ('normal-user','Search/*');
 
