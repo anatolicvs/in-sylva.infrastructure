@@ -406,18 +406,18 @@ CREATE TABLE IF NOT EXISTS profile_specifications(
     updatedAt timestamp
 );
 
-CREATE TABLE unblurred_sites
+drop table if exists unblurred_sites cascade;
+CREATE TABLE IF NOT EXISTS unblurred_sites
 (
     id SERIAL PRIMARY KEY,
-    userid integer NOT NULL,
+    userid integer ,
+    sourceid integer ,
+    siteid integer,
     x real NOT NULL,
     y real NOT NULL,
     geom geometry,
     blurring_rule character(30) COLLATE pg_catalog."default" NOT NULL,
-    new_point boolean,
-
-    createdAt timestamp NOT NULL DEFAULT NOW(),
-    updatedAt timestamp
+    new_point boolean
 )
 WITH (
     OIDS = FALSE
@@ -425,30 +425,91 @@ WITH (
 TABLESPACE pg_default;
 
 COMMENT ON TABLE unblurred_sites
-    IS 'Spatial table containing unblurred coordinates';
+    IS 'Spatial table containing unblurred coordinates; userid, sourceid, siteid are not mandatory...';
 
-CREATE OR REPLACE FUNCTION add_geom_from_x_y() 
-  RETURNS TRIGGER
-  LANGUAGE PLPGSQL 
-AS $add_geom_from_x_y$  
+
+DROP FUNCTION add_geom_from_x_y();
+CREATE FUNCTION add_geom_from_x_y()
+  RETURNS BOOLEAN
+  LANGUAGE PLPGSQL
+AS $$
 BEGIN
-  IF NEW.new_point=true THEN
-    UPDATE unblurred_sites SET 
+    UPDATE unblurred_sites SET
       new_point=false,
-      geom = ST_SetSRID(ST_MakePoint(NEW.x, NEW.y), 4326)
-    WHERE id=NEW.id;
-  END IF;
-  RETURN NEW;
-END;
-$add_geom_from_x_y$ ;
+      geom = ST_SetSRID(ST_MakePoint(x,y), 4326)
+    WHERE new_point=true;
 
-DROP TRIGGER IF EXISTS tr_add_geom on unblurred_sites;
-CREATE TRIGGER tr_add_geom
-  AFTER INSERT
-  ON unblurred_sites
-  FOR EACH ROW
-  EXECUTE PROCEDURE add_geom_from_x_y();
-  
+  RETURN true;
+END;
+$$
+
+--Third part: function generate_blurred_sites
+-- This function computes the blurred points
+-- It returns the number of lost points: meaning that the function has not been able to random geographic point because of overlapping by other points.
+-- TODO: do not compute if the blurred point is already calculted and is not overlapped by any other new donut
+-- TODO: output an array of ids of points that have not been blurred (and disappear) because of overlapping
+-- TODO: join attributes (siteid,sourceid,userid)  from unblurred_sites table in blurred_sites table
+
+CREATE OR REPLACE FUNCTION generate_blurred_sites(OUT nb_perdus integer)
+  LANGUAGE PLPGSQL
+AS $$
+BEGIN
+DROP TABLE IF EXISTS donut CASCADE;
+--Step 1: create donuts
+create TABLE donut as
+select id, ST_BuildArea(ST_Collect(smallc,bigc))::geometry(Polygon,4326) as geom
+FROM (SELECT
+        id, ST_Buffer(geom, split_part(blurring_rule,';',1)::float, 'quad_segs=8') as smallc,
+          ST_Buffer(geom, split_part(blurring_rule,';',2)::float, 'quad_segs=8') as bigc
+                  from unblurred_sites
+        ) as s;
+
+-- Step 2: create view with only allowed zones for random query
+-- Step 2.1: create a view with only small discs (interior circle)
+-- Output: disque_interieur
+------------------------------------------------------------------
+DROP TABLE IF EXISTS disque_interieur CASCADE;
+create TABLE disque_interieur as
+select id, ST_Buffer(geom, split_part(blurring_rule,';',1)::float, 'quad_segs=8')::geometry(Polygon,4326) as geom
+from unblurred_sites;
+
+DROP TABLE IF EXISTS zones_interdites;
+create TABLE zones_interdites as
+select ST_Union(ST_Buffer(geom, split_part(blurring_rule,';',1)::float, 'quad_segs=8')::geometry(Polygon,4326)) as geom
+from unblurred_sites;
+
+-- Step 2.3: create final view by excluding overlapping all parts that are inside the small discs computed at step 2.1
+-- Output: allowed_zones
+--------------------------------------------------------------------------------------------------------------------
+DROP TABLE IF EXISTS allowed_zones CASCADE;
+create TABLE allowed_zones as
+select id, ST_Multi(ST_Difference(donut.geom,cuter.st_union))::geometry geom from
+             donut,
+             (select ST_Union(ARRAY(select geom from disque_interieur) ) )as cuter;
+
+-- Step 3: compute random selection that will generate a layer with one point for each coordinate. The point will be inside allowed zones
+-- Output: blurred_sites
+------------------------------------------------------------------------------------------------------------------------------
+DROP TABLE IF EXISTS blurred_sites CASCADE;
+CREATE TABLE blurred_sites AS
+select id, ST_GeneratePoints(geom,1)::geometry(MultiPoint,4326) as geom from (
+select  donut.id,
+    ST_Multi(
+        ST_Buffer(
+            ST_Intersection(donut.geom, allowed_zones.geom),
+            0.0
+        )
+    ) geom
+from allowed_zones
+     inner join donut on ST_Intersects(allowed_zones.geom, donut.geom)
+where not ST_IsEmpty(ST_Buffer(ST_Intersection(allowed_zones.geom, donut.geom), 0.0)) AND
+	allowed_zones.id = donut.id
+) as donuts_allowed;
+-- Step2.2: determine if donuts are fully overlapped by zones_interdites
+select into nb_perdus count(id) from zones_interdites as A, donut as B
+where ST_Contains(A.geom, B.geom);
+END
+$$
 
 \connect keycloak
 
