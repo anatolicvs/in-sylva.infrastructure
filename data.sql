@@ -40,41 +40,41 @@ CREATE table IF NOT EXISTS std_fields(
 
     CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
         REFERENCES std_fields(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
 );
 
 CREATE TABLE IF NOT EXISTS sources_indices(
-   id serial PRIMARY KEY, 
+   id serial PRIMARY KEY,
    source_id integer,
 
    index_id varchar(50),
    mng_id varchar(50) NOT NULL,
-   is_send boolean  default false, 
+   is_send boolean  default false,
 
    CONSTRAINT sources_indices_source_id_fkey FOREIGN KEY (source_id)
         REFERENCES sources(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION, 
-   
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+
    createdAt timestamp NOT NULL DEFAULT NOW(),
    updatedAt timestamp
 );
 
 CREATE TABLE IF NOT EXISTS policies (
-    id serial PRIMARY KEY, 
+    id serial PRIMARY KEY,
     name varchar(50) NOT NULL,
-    source_id integer, 
-    user_id integer, 
-    
+    source_id integer,
+    user_id integer,
+
     CONSTRAINT policy_user_id_fkey FOREIGN KEY (user_id)
         REFERENCES users(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT policy_source_id_fkey FOREIGN KEY (source_id)
         REFERENCES sources(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     is_default boolean default false,
     createdAt timestamp NOT NULL DEFAULT NOW(),
@@ -82,17 +82,17 @@ CREATE TABLE IF NOT EXISTS policies (
 );
 
 CREATE TABLE IF NOT EXISTS policy_fields(
-    id serial PRIMARY KEY, 
+    id serial PRIMARY KEY,
     policy_id integer,
-    std_field_id integer, 
+    std_field_id integer,
 
     CONSTRAINT policy_field_policy_id_fkey FOREIGN KEY (policy_id)
         REFERENCES policies(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
         REFERENCES std_fields(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -102,15 +102,15 @@ CREATE TABLE IF NOT EXISTS policy_fields(
 CREATE TABLE IF NOT EXISTS groups (
     id serial PRIMARY KEY,
     name varchar(50) NOT NULL,
-    user_id integer, 
-    
+    user_id integer,
+
     CONSTRAINT groups_user_id_fkey FOREIGN KEY (user_id)
         REFERENCES users(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
-); 
+);
 
 CREATE TABLE IF NOT EXISTS groups_policies (
     id serial PRIMARY KEY,
@@ -119,20 +119,20 @@ CREATE TABLE IF NOT EXISTS groups_policies (
 
     CONSTRAINT group_policy_policy_id_fkey FOREIGN KEY (policy_id)
         REFERENCES policies(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT group_policy_group_id_fkey FOREIGN KEY (group_id)
         REFERENCES groups(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
-); 
+);
 
 CREATE TABLE IF NOT EXISTS group_users (
     id serial PRIMARY KEY,
     group_id  integer,
-    user_id integer, 
+    user_id integer,
 
     CONSTRAINT group_user_user_id_fkey FOREIGN KEY (user_id)
         REFERENCES users(id) MATCH SIMPLE
@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS group_users (
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
-); 
+);
 /* CREATE TABLE IF NOT EXISTS policy_user(
     id serial PRIMARY KEY,
     policy_id integer,
@@ -177,7 +177,7 @@ CREATE TABLE IF NOT EXISTS source_sharing(
 
         createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
-); 
+);
 
 
 CREATE table IF NOT EXISTS provider_sources (
@@ -259,7 +259,7 @@ CREATE table IF NOT EXISTS roles(
     updatedAt timestamp
 );
 
-/* Insert default roles */ 
+/* Insert default roles */
 INSERT INTO roles (name,description) values ('super-admin','All/*');
 INSERT INTO roles (name,description) values ('source-manager','Source/*');
 INSERT INTO roles (name,description) values ('normal-user','Search/*');
@@ -295,11 +295,11 @@ CREATE table IF NOT EXISTS roles_std_fields(
 
     CONSTRAINT  roles_fields_role_id_fkey FOREIGN KEY (role_id)
         REFERENCES roles(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT  roles_fields_field_id_fkey FOREIGN KEY (std_field_id)
         REFERENCES std_fields(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -312,11 +312,11 @@ CREATE table IF NOT EXISTS roles_addtl_fields(
 
     CONSTRAINT  roles_fields_role_id_fkey FOREIGN KEY (role_id)
         REFERENCES roles(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT  roles_fields_field_id_fkey FOREIGN KEY (addtl_field_id)
         REFERENCES addtl_fields(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -330,12 +330,12 @@ CREATE table IF NOT EXISTS roles_users (
 
     CONSTRAINT roles_users_role_id_fkey FOREIGN KEY (role_id)
         REFERENCES  roles(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
 
     CONSTRAINT roles_users_kc_id_fkey FOREIGN KEY  (kc_id)
         REFERENCES  users(kc_id) MATCH SIMPLE
-        ON UPDATE NO ACTION  ON DELETE  NO ACTION,
+        ON UPDATE NO ACTION  ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -349,10 +349,10 @@ CREATE table  IF NOT EXISTS user_search_his(
     name varchar(50),
     ui_structure text,
     description text,
-   
+
     CONSTRAINT roles_users_kc_id_fkey FOREIGN KEY  (kc_id)
         REFERENCES  users(kc_id) MATCH SIMPLE
-        ON UPDATE NO ACTION  ON DELETE  NO ACTION,
+        ON UPDATE NO ACTION  ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -362,8 +362,8 @@ create unique index sources_name_uindex
     on sources (name);
 
 CREATE TABLE IF NOT EXISTS user_profile (
-    id serial PRIMARY KEY, 
-    profil_name varchar(100), 
+    id serial PRIMARY KEY,
+    profil_name varchar(100),
     kc_id varchar(100),
 
     CONSTRAINT user_profile_kc_id FOREIGN KEY (kc_id)
@@ -371,7 +371,7 @@ CREATE TABLE IF NOT EXISTS user_profile (
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
-); 
+);
 
 CREATE TABLE IF NOT EXISTS field_specifications (
     id serial PRIMARY KEY,
@@ -393,8 +393,8 @@ CREATE TABLE IF NOT EXISTS field_specifications (
 );
 
 CREATE TABLE IF NOT EXISTS profile_specifications(
-    profil_id int, 
-    field_specification_id int, 
+    profil_id int,
+    field_specification_id int,
 
     CONSTRAINT profile_specifications_profil_id FOREIGN KEY (profil_id)
         REFERENCES user_profile(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
@@ -428,8 +428,8 @@ COMMENT ON TABLE unblurred_sites
     IS 'Spatial table containing unblurred coordinates; userid, sourceid, siteid are not mandatory...';
 
 
-DROP FUNCTION add_geom_from_x_y();
-CREATE FUNCTION add_geom_from_x_y()
+-- DROP FUNCTION add_geom_from_x_y();
+CREATE FUNCTION add_geom_from_x_y() --call this function #1
   RETURNS BOOLEAN
   LANGUAGE PLPGSQL
 AS $$
@@ -450,7 +450,7 @@ $$
 -- TODO: output an array of ids of points that have not been blurred (and disappear) because of overlapping
 -- TODO: join attributes (siteid,sourceid,userid)  from unblurred_sites table in blurred_sites table
 
-CREATE OR REPLACE FUNCTION generate_blurred_sites(OUT nb_perdus integer)
+CREATE OR REPLACE FUNCTION generate_blurred_sites(OUT nb_perdus integer) --# second function #2
   LANGUAGE PLPGSQL
 AS $$
 BEGIN
