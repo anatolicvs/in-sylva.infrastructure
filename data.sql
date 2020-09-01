@@ -136,11 +136,11 @@ CREATE TABLE IF NOT EXISTS group_users (
 
     CONSTRAINT group_user_user_id_fkey FOREIGN KEY (user_id)
         REFERENCES users(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
      CONSTRAINT group_user_group_id_fkey FOREIGN KEY (group_id)
         REFERENCES groups(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -169,11 +169,11 @@ CREATE TABLE IF NOT EXISTS source_sharing(
 
     CONSTRAINT source_sharing_user_id_fkey FOREIGN KEY (user_id)
         REFERENCES users(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT source_sharing_source_id_fkey FOREIGN KEY (source_id)
         REFERENCES sources(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
         createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -187,11 +187,11 @@ CREATE table IF NOT EXISTS provider_sources (
 
     CONSTRAINT provider_sources_source_id_fkey FOREIGN KEY (source_id)
         REFERENCES sources(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT provider_sources_user_id_fkey FOREIGN KEY (user_id)
         REFERENCES users(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -204,7 +204,7 @@ CREATE table IF NOT EXISTS std_fields_values(
 
     CONSTRAINT std_fields_values_fkkey FOREIGN KEY (std_field_id)
         REFERENCES std_fields(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -227,7 +227,7 @@ CREATE table IF NOT EXISTS addtl_fields(
 
     CONSTRAINT addtl_fields_id_fkkey FOREIGN KEY (addtl_field_id)
         REFERENCES addtl_fields(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -240,11 +240,11 @@ CREATE table IF NOT EXISTS addtl_fields_sources(
 
     CONSTRAINT addtl_fields_sources_addtl_field_id_fkey FOREIGN KEY (addtl_field_id)
         REFERENCES addtl_fields(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT addtl_fields_sources_source_id_fkey FOREIGN KEY (source_id)
         REFERENCES sources(id) MATCH SIMPLE
-        ON UPDATE NO ACTION ON DELETE NO ACTION,
+        ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -367,7 +367,7 @@ CREATE TABLE IF NOT EXISTS user_profile (
     kc_id varchar(100),
 
     CONSTRAINT user_profile_kc_id FOREIGN KEY (kc_id)
-        REFERENCES users(kc_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+        REFERENCES users(kc_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -380,13 +380,13 @@ CREATE TABLE IF NOT EXISTS field_specifications (
     kc_id varchar(100),
 
     CONSTRAINT field_specifications_std_field_id FOREIGN KEY (std_field_id)
-        REFERENCES std_fields(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+        REFERENCES std_fields(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT field_specifications_addtl_field_id FOREIGN KEY (addtl_field_id)
-        REFERENCES addtl_fields(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+        REFERENCES addtl_fields(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT field_specifications_kc_id FOREIGN KEY (kc_id)
-        REFERENCES users(kc_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+        REFERENCES users(kc_id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
@@ -397,17 +397,17 @@ CREATE TABLE IF NOT EXISTS profile_specifications(
     field_specification_id int,
 
     CONSTRAINT profile_specifications_profil_id FOREIGN KEY (profil_id)
-        REFERENCES user_profile(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+        REFERENCES user_profile(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE,
 
     CONSTRAINT field_specifications_field_specification_id FOREIGN KEY (field_specification_id)
-        REFERENCES field_specifications(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION,
+        REFERENCES field_specifications(id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
 );
 
 drop table if exists unblurred_sites cascade;
-CREATE TABLE IF NOT EXISTS unblurred_sites
+CREATE TABLE unblurred_sites
 (
     id SERIAL PRIMARY KEY,
     userid integer ,
@@ -426,88 +426,109 @@ TABLESPACE pg_default;
 
 COMMENT ON TABLE unblurred_sites
     IS 'Spatial table containing unblurred coordinates; userid, sourceid, siteid are not mandatory...';
-
-
--- DROP FUNCTION add_geom_from_x_y();
-CREATE FUNCTION add_geom_from_x_y() --call this function #1
+    
+--second part: function add_geom_from_x_y
+--This function computes the geom attribute from x and y coordinates
+--It just returns true when finished
+-- can be called with a simple command: select 
+DROP FUNCTION add_geom_from_x_y();
+CREATE FUNCTION add_geom_from_x_y() 
   RETURNS BOOLEAN
-  LANGUAGE PLPGSQL
-AS $$
+  LANGUAGE PLPGSQL 
+AS $$  
 BEGIN
-    UPDATE unblurred_sites SET
+    UPDATE unblurred_sites SET 
       new_point=false,
       geom = ST_SetSRID(ST_MakePoint(x,y), 4326)
     WHERE new_point=true;
-
+  
   RETURN true;
 END;
 $$
 
 --Third part: function generate_blurred_sites
--- This function computes the blurred points
+-- This function computes the blurred points 
 -- It returns the number of lost points: meaning that the function has not been able to random geographic point because of overlapping by other points.
--- TODO: do not compute if the blurred point is already calculted and is not overlapped by any other new donut
--- TODO: output an array of ids of points that have not been blurred (and disappear) because of overlapping
--- TODO: join attributes (siteid,sourceid,userid)  from unblurred_sites table in blurred_sites table
-
-CREATE OR REPLACE FUNCTION generate_blurred_sites(OUT nb_perdus integer) --# second function #2
-  LANGUAGE PLPGSQL
-AS $$
+-- During the process, several table are generated
+--  donut: table with donut polygons for each point in unblurred_sites
+--  disque_interieur: table with only interior disque of the donut
+--  allowed_zones: table with intersected zones that define the polygons in which randomizing points will be allowed
+--  blurred_sites: table with new points for each point in unblurred_sites
+--  overlapping: table empty if no overlapping problem. Instead, you will find id of the point that have not been generated in blurred_sites because of overlapping. The second column gives the id of the overlapping point.
+-- TODO: do not compute if the blurred point is already calculated and is not overlapped by any other new donut
+-- TODO: join attributes (siteid,sourceid,userid)  from unblurred_sites table in blurred_sites table 
+CREATE OR REPLACE FUNCTION generate_blurred_sites(OUT nb_perdus integer)
+  LANGUAGE PLPGSQL 
+AS $$  
+  
 BEGIN
 DROP TABLE IF EXISTS donut CASCADE;
 --Step 1: create donuts
-create TABLE donut as
-select id, ST_BuildArea(ST_Collect(smallc,bigc))::geometry(Polygon,4326) as geom
+CREATE TABLE donut AS
+SELECT id, ST_BuildArea(ST_Collect(smallc,bigc))::geometry(Polygon,4326) AS geom
 FROM (SELECT
-        id, ST_Buffer(geom, split_part(blurring_rule,';',1)::float, 'quad_segs=8') as smallc,
-          ST_Buffer(geom, split_part(blurring_rule,';',2)::float, 'quad_segs=8') as bigc
-                  from unblurred_sites
-        ) as s;
+        id, ST_Buffer(geom, split_part(blurring_rule,';',1)::float, 'quad_segs=8') AS smallc,
+          ST_Buffer(geom, split_part(blurring_rule,';',2)::float, 'quad_segs=8') AS bigc
+                  FROM unblurred_sites
+        ) AS s;
 
--- Step 2: create view with only allowed zones for random query
--- Step 2.1: create a view with only small discs (interior circle)
+-- Step 2: create table with only allowed zones for random query
+-- Step 2.1: create a table with only small discs (interior circle)
 -- Output: disque_interieur
 ------------------------------------------------------------------
 DROP TABLE IF EXISTS disque_interieur CASCADE;
-create TABLE disque_interieur as
-select id, ST_Buffer(geom, split_part(blurring_rule,';',1)::float, 'quad_segs=8')::geometry(Polygon,4326) as geom
-from unblurred_sites;
+CREATE TABLE disque_interieur AS
+SELECT id, ST_Buffer(geom, split_part(blurring_rule,';',1)::float, 'quad_segs=8')::geometry(Polygon,4326) AS geom
+FROM unblurred_sites;
 
-DROP TABLE IF EXISTS zones_interdites;
-create TABLE zones_interdites as
-select ST_Union(ST_Buffer(geom, split_part(blurring_rule,';',1)::float, 'quad_segs=8')::geometry(Polygon,4326)) as geom
-from unblurred_sites;
 
--- Step 2.3: create final view by excluding overlapping all parts that are inside the small discs computed at step 2.1
+-- Step 2.2: create allowed_zones table by excluding overlapping all parts that are inside the small discs computed in previous step
 -- Output: allowed_zones
 --------------------------------------------------------------------------------------------------------------------
 DROP TABLE IF EXISTS allowed_zones CASCADE;
-create TABLE allowed_zones as
-select id, ST_Multi(ST_Difference(donut.geom,cuter.st_union))::geometry geom from
+CREATE TABLE allowed_zones AS
+SELECT id, ST_Multi(ST_Difference(donut.geom,cuter.st_union))::geometry geom FROM
              donut,
-             (select ST_Union(ARRAY(select geom from disque_interieur) ) )as cuter;
+             (SELECT ST_Union(ARRAY(SELECT geom FROM disque_interieur) ) )AS cuter;
 
--- Step 3: compute random selection that will generate a layer with one point for each coordinate. The point will be inside allowed zones
+
+-- Step 3: compute random selection that will generate a layer with one point for earch coordinate. The point will be inside allowed zones
 -- Output: blurred_sites
 ------------------------------------------------------------------------------------------------------------------------------
 DROP TABLE IF EXISTS blurred_sites CASCADE;
 CREATE TABLE blurred_sites AS
-select id, ST_GeneratePoints(geom,1)::geometry(MultiPoint,4326) as geom from (
-select  donut.id,
+SELECT id, ST_GeometryN(ST_GeneratePoints(geom,1),1)::geometry(Point,4326) AS geom FROM ( 
+SELECT  donut.id,
     ST_Multi(
         ST_Buffer(
             ST_Intersection(donut.geom, allowed_zones.geom),
             0.0
         )
     ) geom
-from allowed_zones
-     inner join donut on ST_Intersects(allowed_zones.geom, donut.geom)
-where not ST_IsEmpty(ST_Buffer(ST_Intersection(allowed_zones.geom, donut.geom), 0.0)) AND
+FROM allowed_zones
+     INNER JOIN donut ON ST_Intersects(allowed_zones.geom, donut.geom)
+WHERE NOT ST_IsEmpty(ST_Buffer(ST_Intersection(allowed_zones.geom, donut.geom), 0.0)) AND
 	allowed_zones.id = donut.id
-) as donuts_allowed;
--- Step2.2: determine if donuts are fully overlapped by zones_interdites
-select into nb_perdus count(id) from zones_interdites as A, donut as B
-where ST_Contains(A.geom, B.geom);
+) AS donuts_allowed;
+------------------
+
+-- Step 4: compute and add column with geojson text of the point
+ALTER TABLE blurred_sites ADD COLUMN geojson text;
+UPDATE blurred_sites  SET geojson = ST_AsGeoJSON(geom);
+
+
+--Step 5: detect donnut fully overlapped by other disque_interieur
+-- this will create a table with overlapping events. If empty, everything is done
+DROP TABLE IF EXISTS overlapping;
+CREATE TABLE overlapping as 
+SELECT D.id AS lost_id, I.id AS overlapping_point
+  FROM donut D , disque_interieur I
+  WHERE ST_Contains(I.geom,D.geom) = true;
+
+-- Step 6: count the number of lost points (their donuts are fully overlapped by a bigger donut !) 
+-- This is the returned value
+SELECT INTO nb_perdus count(lost_id) FROM overlapping; 
+
 END
 $$
 
