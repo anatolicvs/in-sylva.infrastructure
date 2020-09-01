@@ -3,7 +3,7 @@ CREATE EXTENSION postgis;
 
 CREATE TABLE IF NOT EXISTS users (
     id serial UNIQUE PRIMARY KEY,
-    kc_id varchar(100) UNIQUE NOT NULL,
+    kc_id varchar(100) UNIQUE,
     username varchar(50) NOT NULL,
     name varchar(50) ,
     surname varchar(50),
