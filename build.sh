@@ -72,6 +72,15 @@ if [ -z $MODE ]; then
   exit
 fi
 
+if [ "$MODE" == "prod" ];
+	echo -n "Would do like to reinitialize all docker volumes (this will delete previous data) ? [o/n] "
+	read rep
+	if [ "$rep" == "o" ]; then
+		docker-compose down
+		docker system prune -f
+	fi
+fi
+
 if [ "$MODE" == "prod" -a -z "$DOMAIN" ]; then
   DOMAIN="w3.avignon.inra.fr/bas_insylva/"
   echo "INFO: no domain defined. Using $DOMAIN"
