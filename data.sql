@@ -431,6 +431,31 @@ COMMENT ON TABLE unblurred_sites
 --This function computes the geom attribute from x and y coordinates
 --It just returns true when finished
 -- can be called with a simple command: select 
+drop table if exists unblurred_sites cascade;
+CREATE TABLE unblurred_sites
+(
+    id SERIAL PRIMARY KEY,
+    userid integer ,
+    sourceid integer ,
+    siteid integer,
+    x real NOT NULL,
+    y real NOT NULL,
+    geom geometry,
+    blurring_rule character(30) COLLATE pg_catalog."default" NOT NULL,
+    new_point boolean
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+COMMENT ON TABLE unblurred_sites
+    IS 'Spatial table containing unblurred coordinates; userid, sourceid, siteid are not mandatory...';
+    
+--second part: function add_geom_from_x_y
+--This function computes the geom attribute from x and y coordinates
+--It just returns true when finished
+-- can be called with a simple command: select 
 DROP FUNCTION add_geom_from_x_y();
 CREATE FUNCTION add_geom_from_x_y() 
   RETURNS BOOLEAN
@@ -444,7 +469,7 @@ BEGIN
   
   RETURN true;
 END;
-$$
+$$;
 
 --Third part: function generate_blurred_sites
 -- This function computes the blurred points 
@@ -530,7 +555,7 @@ SELECT D.id AS lost_id, I.id AS overlapping_point
 SELECT INTO nb_perdus count(lost_id) FROM overlapping; 
 
 END
-$$
+$$;
 
 \connect keycloak
 
