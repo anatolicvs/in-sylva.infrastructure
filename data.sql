@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS sources_indices(
    source_id integer,
 
    index_id varchar(50),
-   mng_id varchar(50) NOT NULL,
+   mng_id varchar(50),
    is_send boolean  default false,
 
    CONSTRAINT sources_indices_source_id_fkey FOREIGN KEY (source_id)
