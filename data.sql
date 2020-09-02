@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS sources_indices(
    id serial PRIMARY KEY,
    source_id integer,
 
-   index_id varchar(50),
+   index_id varchar(120),
    mng_id varchar(50),
    is_send boolean  default false,
 
