@@ -72,12 +72,12 @@ if [ -z $MODE ]; then
   exit
 fi
 
-if [ "$MODE" == "prod" ];
+if [ "$MODE" == "prod" ]; then
 	echo -n "Would do like to reinitialize all docker volumes (this will delete previous data) ? [o/n] "
 	read rep
 	if [ "$rep" == "o" ]; then
-		docker-compose down
-		docker system prune -f
+		  docker-compose down
+		  docker system prune -f
 	fi
 fi
 
