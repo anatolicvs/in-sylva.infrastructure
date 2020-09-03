@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     name varchar(50) ,
     surname varchar(50),
     email varchar(50) UNIQUE NOT NULL,
-    password varchar(50) NOT NULL,
+    password varchar(150) NOT NULL,
     createdAt timestamp NOT NULL DEFAULT NOW(),
     updatedAt timestamp
 );
@@ -92,6 +92,23 @@ CREATE TABLE IF NOT EXISTS policy_fields(
 
     CONSTRAINT std_fields_id_fkkey FOREIGN KEY (std_field_id)
         REFERENCES std_fields(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
+);
+
+CREATE TABLE IF NOT EXISTS policy_sources(
+    id serial PRIMARY KEY,
+    policy_id integer,
+    source_id integer,
+
+    CONSTRAINT policy_field_policy_id_fkey FOREIGN KEY (policy_id)
+        REFERENCES policies(id) MATCH SIMPLE
+        ON UPDATE NO ACTION ON DELETE CASCADE,
+
+    CONSTRAINT policy_source_source_id_fkkey FOREIGN KEY (source_id)
+        REFERENCES sources(id) MATCH SIMPLE
         ON UPDATE NO ACTION ON DELETE CASCADE,
 
     createdAt timestamp NOT NULL DEFAULT NOW(),
