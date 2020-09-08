@@ -567,7 +567,17 @@ SELECT D.id AS lost_id, I.id AS overlapping_point
   FROM donut D , disque_interieur I
   WHERE ST_Contains(I.geom,D.geom) = true;
 
--- Step 6: count the number of lost points (their donuts are fully overlapped by a bigger donut !) 
+--Step 6: create a full version of the input table (unblurred_sites)with null value for coordinates in geojson when point is overlapped
+DROP TABLE IF EXISTS full_blurred_sites;
+CREATE TABLE full_blurred_sites AS
+SELECT U.id,B.geojson FROM unblurred_sites as U 
+LEFT JOIN 
+blurred_sites AS B ON U.id = B.id;
+UPDATE full_blurred_sites 
+SET geojson='{"type":"Point","coordinates":[NULL,NULL]}' 
+WHERE geojson IS NULL;
+
+-- Step 7: count the number of lost points (their donuts are fully overlapped by a bigger donut !) 
 -- This is the returned value
 SELECT INTO nb_perdus count(lost_id) FROM overlapping; 
 
