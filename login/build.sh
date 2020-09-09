@@ -20,6 +20,7 @@ docker build --no-cache --build-arg SSH_KEY="$SSH_KEY" --build-arg SSH_KEY_PASSP
  --build-arg IN_SYLVA_SEARCH_HOST="$IN_SYLVA_SEARCH_HOST_FOR_LOGIN" \
  --build-arg IN_SYLVA_GATEKEEPER_HOST="$IN_SYLVA_GATEKEEPER_HOST_FOR_LOGIN" \
  --build-arg IN_SYLVA_GATEKEEPER_PORT="4000" \
+ --build-arg IN_SYLVA_reCAPTCHA_site_key="$IN_SYLVA_reCAPTCHA_site_key"
  --tag in-sylva.user.login ./login/.
  
 

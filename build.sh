@@ -148,6 +148,8 @@ export IN_SYLVA_SEARCH_PORT=$(grep IN_SYLVA_SEARCH_PORT ipconfig.txt| awk '{prin
 export IN_SYLVA_SEARCH_HOST=$(grep IN_SYLVA_SEARCH_HOST ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_SEARCH_PORT=$(grep IN_SYLVA_LOGIN_PORT ipconfig.txt| awk '{print $2}')
 export IN_SYLVA_SEARCH_HOST=$(grep IN_SYLVA_LOGIN_HOST ipconfig.txt| awk '{print $2}')
+# Attention, you can generate reCAPTCHA_site_key by following this link https://www.google.com/u/3/recaptcha/admin/site/ with In-Sylva gmail account that is named insylva2020@gmail.com 
+export IN_SYLVA_reCAPTCHA_site_key="6LflFcoZAAAAABawkeag3uWRAdeFZ9uSB7vJoeTg"
 
 if [ "$MODE" == "dev" ]; then
   export IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN="${DOMAIN}:7000/keycloak" 
