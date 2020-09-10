@@ -115,7 +115,7 @@ cp portal/.env_generic portal/.env
 cp search/nginx/nginx_generic.conf search/nginx/nginx.conf 
 cp portal/nginx/nginx_generic.conf portal/nginx/nginx.conf 
 if [ "$MODE" == "prod" ];then
-  
+  SERVER_IP="147.100.20.44"
   # search customization
   sed -i -e "s,server_name .,server_name ${DOMAIN}search/," search/nginx/nginx.conf
   sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/search/," search/.env
@@ -125,7 +125,12 @@ if [ "$MODE" == "prod" ];then
   sed -i -e "s,server_name .,server_name ${DOMAIN}portal/," portal/nginx/nginx.conf
   sed -i -e "s,_HOST=/,_HOST=${NGINXCONF}/portal/," portal/.env
   sed -i -e "s,REACT_APP_IN_SYLVA_LOGIN_HOST=.*,REACT_APP_IN_SYLVA_LOGIN_HOST=http://${DOMAIN}login/," portal/.env
-  
+  sed -i -e "s,REACT_APP_IN_SYLVA_KIBANA_URL=.*,REACT_APP_IN_SYLVA_KIBANA_URL=http://${SERVER_IP}:5601/," portal/.env
+  sed -i -e "s,REACT_APP_IN_SYLVA_POSTGRESQL_URL=.*,REACT_APP_IN_SYLVA_POSTGRESQL_URL=http://${SERVER_IP}:5050/login?next=%2F/," portal/.env
+  sed -i -e "s,REACT_APP_IN_SYLVA_MONGODB_URL=.*,REACT_APP_IN_SYLVA_MONGODB_URL=http://${SERVER_IP}:8881/," portal/.env
+  sed -i -e "s,REACT_APP_IN_SYLVA_ELASTICSEARCH_URL=.*,REACT_APP_IN_SYLVA_ELASTICSEARCH_URL=http://${SERVER_IP}:9200/," portal/.env
+  sed -i -e "s,REACT_APP_IN_SYLVA_KEYCLOAK_URL=.*,REACT_APP_IN_SYLVA_KEYCLOAK_URL=http://${SERVER_IP}:7000/keycloak/auth//," portal/.env
+  sed -i -e "s,REACT_APP_IN_SYLVA_PORTAINER_URL=.*,REACT_APP_IN_SYLVA_PORTAINER_URL=http://${SERVER_IP}:9000/#/init/admin/," portal/.env
 fi
 
 # login customization
