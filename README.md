@@ -7,8 +7,48 @@
 * docker >= 17.12.0+
 * docker-compose
 
-* Run this command `docker-compose --compatibility up -d`
-* Run this command for stats of the container (ex: Mem & CPU usage.) `docker stats postgres_container`
+## Build 
+
+*  To Build the all necessary images regarding of your environment, it could be your machine as development or your host machine as production environment. Follow the example below; 
+    * Starts building for development; 
+
+    ```sh
+    $ sh build.sh -k id_rsa -e dev
+    ```
+    *  Starts building for production; 
+
+    ```sh
+    $ sh build.sh -k id_rsa -e prod -d w3.avignon.inra.fr/bas_insylva/ -ip 147.100.20.44 -p 8081
+    ```
+
+## RUN 
+* To able to run `Infrastructure`, please follow these stages below; 
+    * Run this command 
+    ```sh
+    $ docker-compose --compatibility up -d
+    ```
+    * Run this command for stats of the container (ex: Mem & CPU usage.) 
+     ```sh
+    $ docker stats postgres_container
+    ```
+
+* After build stage is completed, you should configure your 'Keycloak',
+    * First, please go your PgAdmin (http://$YOUR_IP_OR_LOCALHOST:5050/), then enter the credentials that located in the project root .env file. After login, make your postgresql settings and switch the 'keycloak as your primary database' and run this command as below; 
+
+     ```sql
+      update REALM set ssl_required = 'NONE' where id = 'master';
+     ```
+     * Second, please go your Keycloak application by following this url ((http://$YOUR_IP_OR_LOCALHOST:7000/keycloak/auth/), then enter the neccessary login credentials that located in the project root .env file, and import the `realm-export.json` it is located in the keycloak folder.
+
+     * After the second step, please run below command to able to create admin user for the system, be aware it is very important, without this account you cannot acces to portal.
+
+     * Finnaly you can access to portal, with these credentials: 
+        * username: admin@inrae.fr
+        * psswd: 
+
+       ```sh
+        $ curl --location --request POST 'http://$YOUR_IP_OR_LOCALHOST:4000/user/create-system-user'
+       ```
 
 [![asciicast](https://asciinema.org/a/aoUNfjZ2okPW5WFltYSQqmrsm.svg)](https://asciinema.org/a/aoUNfjZ2okPW5WFltYSQqmrsm)
 

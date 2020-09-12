@@ -13,7 +13,7 @@ services:
       '
     user: "0"
     working_dir: /usr/share/elasticsearch
-    volumes: ['certs:/usr/share/elasticsearch/config/certificates']
+    volumes: ["certs:/usr/share/elasticsearch/config/certificates"]
 
   es01:
     container_name: es01
@@ -31,7 +31,12 @@ services:
       - xpack.security.transport.ssl.verification_mode=certificate
       - xpack.security.transport.ssl.keystore.path=/usr/share/elasticsearch/config/certificates/elastic-certificates.p12
       - xpack.security.transport.ssl.truststore.path=/usr/share/elasticsearch/config/certificates/elastic-certificates.p12
-    volumes: ['esdata:/usr/share/elasticsearch/data', 'certs:/usr/share/elasticsearch/config/certificates', 'logs:/var/log']
+    volumes:
+      [
+        "esdata:/usr/share/elasticsearch/data",
+        "certs:/usr/share/elasticsearch/config/certificates",
+        "logs:/var/log",
+      ]
     ulimits:
       nofile:
         soft: 65536
@@ -80,7 +85,7 @@ services:
       - ELASTICSEARCH_HOSTS=http://es01:9200
       - ELASTICSEARCH_USERNAME=$ELASTICSEARCH_USERNAME
       - ELASTICSEARCH_PASSWORD=$ELASTICSEARCH_PASSWORD
-    volumes: 
+    volumes:
       - type: volume
         source: logs
         target: /var/log
@@ -216,7 +221,7 @@ services:
     networks:
       - insylva-net
     restart: unless-stopped
-  
+
   search-api:
     image: in-sylva.search.api:latest
     depends_on: [es01]
@@ -288,7 +293,7 @@ services:
       KEYCLOAK_CREDENTIALS_SECRET: $KEYCLOAK_CREDENTIALS_SECRET
 
       IN_SYLVA_reCAPTCHA_SECRET_KEY: $IN_SYLVA_reCAPTCHA_SECRET_KEY
-      
+
       IN_SYLVA_EMAIL: $IN_SYLVA_EMAIL
       IN_SYLVA_EMAIL_PASSWORD: $IN_SYLVA_EMAIL_PASSWORD
       IN_SYLVA_SMTP_HOST: $IN_SYLVA_SMTP_HOST
@@ -296,6 +301,9 @@ services:
       IN_SYLVA_SMTP_SECURE: $IN_SYLVA_SMTP_SECURE
       IN_SYLVA_EMAIL_TO: $IN_SYLVA_EMAIL_TO
       IN_SYLVA_EMAIL_FROM: $IN_SYLVA_EMAIL_FROM
+
+      IN_SYLVA_ADMIN_USERNAME: $IN_SYLVA_ADMIN_USERNAME
+      IN_SYLVA_ADMIN_PASSWORD: $IN_SYLVA_ADMIN_PASSWORD
     networks:
       - insylva-net
     restart: unless-stopped
@@ -445,7 +453,6 @@ volumes:
   certs:
   portainer_data:
   logs:
-  
 
 networks:
   insylva-net:
