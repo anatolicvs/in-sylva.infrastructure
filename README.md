@@ -42,7 +42,7 @@
 
      * After the second step, please run below command to able to create admin user for the system, be aware it is very important, without this account you cannot acces to portal.
 
-     * Finnaly you can access to portal, with these credentials: 
+     * Finaly you can access to portal, with these credentials: 
         * username: admin@inrae.fr
         * psswd: 
 
