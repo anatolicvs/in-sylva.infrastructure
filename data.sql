@@ -423,27 +423,7 @@ CREATE TABLE IF NOT EXISTS profile_specifications(
     updatedAt timestamp
 );
 
-drop table if exists unblurred_sites cascade;
-CREATE TABLE unblurred_sites
-(
-    id SERIAL PRIMARY KEY,
-    userid integer ,
-    sourceid integer ,
-    siteid integer,
-    x real NOT NULL,
-    y real NOT NULL,
-    geom geometry,
-    blurring_rule character(30) COLLATE pg_catalog."default" NOT NULL,
-    new_point boolean
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
 
-COMMENT ON TABLE unblurred_sites
-    IS 'Spatial table containing unblurred coordinates; userid, sourceid, siteid are not mandatory...';
-    
 --second part: function add_geom_from_x_y
 --This function computes the geom attribute from x and y coordinates
 --It just returns true when finished
@@ -453,13 +433,17 @@ CREATE TABLE unblurred_sites
 (
     id SERIAL PRIMARY KEY,
     userid integer ,
-    sourceid integer ,
+    indexid varchar(120), -- in elasticsearch index_id holds all documents within. The reason of to remove sourceid from the table is simple I do not want to make unnecessary joins through source table.
+    docid varchar(100) , --  in index_id doc_id is symbolize one unique document.
     siteid integer,
     x real NOT NULL,
     y real NOT NULL,
     geom geometry,
     blurring_rule character(30) COLLATE pg_catalog."default" NOT NULL,
-    new_point boolean
+    new_point boolean,
+    --do not delete the line below. 
+    createdAt timestamp NOT NULL DEFAULT NOW(),
+    updatedAt timestamp
 )
 WITH (
     OIDS = FALSE
