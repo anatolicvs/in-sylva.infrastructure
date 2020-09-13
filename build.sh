@@ -108,12 +108,13 @@ if [ ! -z "$DOMAIN" ]; then
 fi
 
 # creating .env and nginx.conf files from generic version 
-rm -f search/.env portal/.env search/nginx/nginx.conf portal/nginx/nginx.conf
+rm -f search/.env portal/.env search/nginx/nginx.conf portal/nginx/nginx.conf login/nginx/nginx.conf
 
 cp search/.env_generic search/.env
 cp portal/.env_generic portal/.env
 cp search/nginx/nginx_generic.conf search/nginx/nginx.conf 
 cp portal/nginx/nginx_generic.conf portal/nginx/nginx.conf 
+cp login/nginx/nginx_generic.conf login/nginx/nginx.conf
 if [ "$MODE" == "prod" ];then
   SERVER_IP="147.100.20.44"
   # search customization
@@ -131,6 +132,10 @@ if [ "$MODE" == "prod" ];then
   sed -i -e "s,REACT_APP_IN_SYLVA_ELASTICSEARCH_URL=.*,REACT_APP_IN_SYLVA_ELASTICSEARCH_URL=http://${SERVER_IP}:9200/," portal/.env
   sed -i -e "s,REACT_APP_IN_SYLVA_KEYCLOAK_URL=.*,REACT_APP_IN_SYLVA_KEYCLOAK_URL=http://${SERVER_IP}:7000/keycloak/auth//," portal/.env
   sed -i -e "s,REACT_APP_IN_SYLVA_PORTAINER_URL=.*,REACT_APP_IN_SYLVA_PORTAINER_URL=http://${SERVER_IP}:9000/#/init/admin/," portal/.env
+
+
+  # login customization 
+  sed -i -e "s,server_name .,server_name ${DOMAIN}login/," login/nginx/nginx.conf
 fi
 
 # login customization
@@ -157,15 +162,15 @@ export IN_SYLVA_SEARCH_HOST=$(grep IN_SYLVA_LOGIN_HOST ipconfig.txt| awk '{print
 export IN_SYLVA_reCAPTCHA_site_key="6LflFcoZAAAAABawkeag3uWRAdeFZ9uSB7vJoeTg"
 
 if [ "$MODE" == "dev" ]; then
-  export IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN="${DOMAIN}:7000/keycloak" 
+  export IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN="${DOMAIN}:8081/keycloak" 
   export IN_SYLVA_PORTAL_HOST_FOR_LOGIN="${DOMAIN}:3000" 
   export IN_SYLVA_SEARCH_HOST_FOR_LOGIN="${DOMAIN}:3001" 
-  export IN_SYLVA_GATEKEEPER_HOST_FOR_LOGIN="${DOMAIN}:3000/gatekeeper" 
+  export IN_SYLVA_GATEKEEPER_HOST_FOR_LOGIN="${DOMAIN}:8081/gatekeeper" 
 else 
-  export IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN="${DOMAIN}search/keycloak"  
+  export IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN="${DOMAIN}login/keycloak"  
   export IN_SYLVA_PORTAL_HOST_FOR_LOGIN="${DOMAIN}portal" 
   export IN_SYLVA_SEARCH_HOST_FOR_LOGIN="${DOMAIN}search" 
-  export IN_SYLVA_GATEKEEPER_HOST_FOR_LOGIN="${DOMAIN}portal/gatekeeper" 
+  export IN_SYLVA_GATEKEEPER_HOST_FOR_LOGIN="${DOMAIN}login/gatekeeper" 
 fi
 
 echo $IN_SYLVA_KEYCLOAK_HOST_FOR_LOGIN
@@ -184,7 +189,7 @@ fi
 
 echo $publickey
 echo "IN-SYLVA project 'Docker images' list: "
-echo "        --> gatekeeper, keycloak, login, portal, postgresql, sourceman, search, search-api, doc"
+echo "        --> gatekeeper, keycloak, login,login-server ,portal, postgresql, sourceman, search, search-api, doc"
 echo ""
 echo -n "Enter the name of docker image you want to build locally: (ex:gatekeeper or || all): "
 
@@ -214,6 +219,11 @@ case $imageName in
         sh ./login/build.sh $KEY
         wait
         echo -e $"login image Successfully built\n"
+        ;;
+    "login-server")
+        sh ./login/nginx/build.sh $KEY
+        wait
+        echo -e $"login-server image Successfully built\n"
         ;;
     "portal")
         sh ./portal/build.sh $KEY
@@ -273,6 +283,9 @@ case $imageName in
       sh ./doc/build.sh $KEY
       wait
       echo $"doc image Successfully built\n"
+      sh ./login/nginx/build.sh $KEY
+      wait
+      echo -e $"login-server image Successfully built\n"
       ;;
     *)
       echo "Option not allowed. Restart the build script and read carefully !"

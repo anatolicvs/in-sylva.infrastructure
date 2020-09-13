@@ -75,5 +75,3 @@ EXPOSE 8080
 WORKDIR /app/in-sylva.user.login/
 
 CMD [ "pm2-runtime", "npm","--", "start" ]
-
-# CMD  npm run start

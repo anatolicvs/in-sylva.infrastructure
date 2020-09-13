@@ -395,11 +395,19 @@ services:
       IN_SYLVA_CLIENT_ID: "in-sylva.user.app"
       IN_SYLVA_GRANT_TYPE: "password"
       IN_SYLVA_REALM: "in-sylva"
-    ports:
-      - 8081:8081
     links:
       - gatekeeper
       - keycloak
+    networks:
+      - insylva-net
+    restart: unless-stopped
+
+  login-server: 
+    image: in-sylva.login-server:latest
+    container_name: in-sylva.login-server
+    depends_on: [login,gatekeeper,keycloak]
+    ports:
+      - 8081:8081
     networks:
       - insylva-net
     restart: unless-stopped
